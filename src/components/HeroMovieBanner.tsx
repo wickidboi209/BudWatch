@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useRef, useState } from "react";
-import { Animated, Easing, Pressable, StyleSheet, Text, View } from "react-native";
+import { Animated, Dimensions, Easing, Pressable, StyleSheet, Text, View } from "react-native";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 import { Colors } from "../theme/colors";
 import { Radius } from "../theme/radius";
@@ -62,8 +62,10 @@ export function HeroMovieFallback({ onRetry }: { onRetry?: () => void }) {
   </View>;
 }
 
+const HERO_HEIGHT = Dimensions.get("window").height * 0.45;
+
 const styles = StyleSheet.create({
-  container: { aspectRatio: 0.92, backgroundColor: Colors.surfaceElevated, overflow: "hidden", ...Shadows.hero },
+  container: { backgroundColor: Colors.surfaceElevated, height: HERO_HEIGHT, overflow: "hidden", ...Shadows.hero },
   image: { ...StyleSheet.absoluteFill, height: "100%", width: "100%" },
   fallbackArtwork: { ...StyleSheet.absoluteFill, alignItems: "center", backgroundColor: Colors.surfaceElevated, justifyContent: "center" },
   fallbackTitle: { color: Colors.textSecondary, ...Typography.title },
@@ -74,10 +76,10 @@ const styles = StyleSheet.create({
   scorePill: { alignSelf: "flex-start", backgroundColor: Colors.overlay, borderRadius: Radius.pill, marginTop: Spacing.md, paddingHorizontal: Spacing.md, paddingVertical: Spacing.xs },
   score: { color: Colors.text, ...Typography.label },
   leaf: { fontSize: 16 },
-  buttonRow: { alignItems: "center", flexDirection: "row", gap: Spacing.sm, marginTop: Spacing.lg },
-  watchButton: { alignItems: "center", backgroundColor: Colors.text, borderRadius: Radius.pill, flexDirection: "row", gap: Spacing.sm, minHeight: 44, paddingHorizontal: Spacing.lg },
+  buttonRow: { alignItems: "center", flexDirection: "row", gap: Spacing.xs, marginTop: Spacing.lg },
+  watchButton: { alignItems: "center", backgroundColor: Colors.text, borderRadius: Radius.pill, flexDirection: "row", gap: Spacing.xs, minHeight: 44, paddingHorizontal: Spacing.md },
   watchText: { color: Colors.background, ...Typography.label },
-  detailsButton: { borderColor: Colors.textSecondary, borderRadius: Radius.pill, borderWidth: 1, justifyContent: "center", minHeight: 44, paddingHorizontal: Spacing.lg },
+  detailsButton: { borderColor: Colors.textSecondary, borderRadius: Radius.pill, borderWidth: 1, justifyContent: "center", minHeight: 44, paddingHorizontal: Spacing.md },
   detailsText: { color: Colors.text, ...Typography.label },
   pressed: { opacity: 0.7 },
   fallback: { backgroundColor: Colors.surface, justifyContent: "center", minHeight: 300, padding: Spacing.xl },

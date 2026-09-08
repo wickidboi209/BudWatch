@@ -1,34 +1,85 @@
 import { Ionicons } from "@expo/vector-icons";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { useCallback, useEffect, useState } from "react";
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BudScoreCard } from "../components/BudScoreCard";
 import { CrewList } from "../components/social/CrewList";
+import { useAuth } from "../hooks/useAuth";
+import { ExperienceStats, getUserExperienceStats } from "../services/experiences";
 import { crewMembers } from "../services/social";
 import { Colors } from "../theme/colors";
 import { Radius } from "../theme/radius";
 import { Spacing } from "../theme/spacing";
 import { Typography } from "../theme/typography";
 
+const moodLabels: Record<string, string> = {
+  laugh: "Laugh",
+  "mind-bending": "Mind Bending",
+  "sci-fi": "Escape",
+  relax: "Relax",
+  horror: "Horror",
+  animation: "Animation",
+};
+
 export default function ProfileScreen() {
+  const { signOut, user } = useAuth();
+  const [stats, setStats] = useState<ExperienceStats | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSigningOut, setIsSigningOut] = useState(false);
+
+  useEffect(() => {
+    let isCurrent = true;
+    setIsLoading(true);
+    setError(null);
+    getUserExperienceStats()
+      .then((result) => { if (isCurrent) setStats(result); })
+      .catch((requestError: unknown) => { if (isCurrent) setError(requestError instanceof Error ? requestError.message : "Unable to load your stats."); })
+      .finally(() => { if (isCurrent) setIsLoading(false); });
+    return () => { isCurrent = false; };
+  }, []);
+
+  const handleSignOut = useCallback(async () => {
+    setIsSigningOut(true);
+    try { await signOut(); } finally { setIsSigningOut(false); }
+  }, [signOut]);
+
+  const favoriteMood = stats?.favoriteMood ? moodLabels[stats.favoriteMood] ?? stats.favoriteMood : "Not enough data";
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.profileHeader}>
           <View style={styles.avatar}><Ionicons color={Colors.textSecondary} name="person" size={30} /></View>
-          <View><Text style={styles.eyebrow}>YOUR IDENTITY</Text><Text style={styles.title}>BudWatch Profile</Text></View>
+          <View style={styles.identity}>
+            <Text style={styles.eyebrow}>YOUR IDENTITY</Text>
+            <Text numberOfLines={1} style={styles.title}>{user?.email ?? "BudWatch Profile"}</Text>
+          </View>
         </View>
 
         <Text style={styles.sectionTitle}>Your signal</Text>
-        <BudScoreCard score={null} totalExperiences={0} />
-        <View style={styles.statsGrid}>
-          <Stat label="Experiences" value="0" />
-          <Stat label="Lists" value="0" />
-          <Stat label="Favorite mood" value="Not enough data" />
-          <Stat label="Favorite genres" value="Not enough data" />
-        </View>
+        {isLoading ? (
+          <ActivityIndicator color={Colors.primary} style={styles.loading} />
+        ) : error ? (
+          <Text style={styles.error}>{error}</Text>
+        ) : (
+          <>
+            <BudScoreCard score={stats?.averageBudScore ?? null} totalExperiences={stats?.totalExperiences ?? 0} />
+            <View style={styles.statsGrid}>
+              <Stat label="Experiences" value={String(stats?.totalExperiences ?? 0)} />
+              <Stat label="Lists" value="0" />
+              <Stat label="Favorite mood" value={favoriteMood} />
+              <Stat label="Favorite genres" value="Not enough data" />
+            </View>
+          </>
+        )}
 
         <Text style={styles.sectionTitle}>Crew</Text>
         <CrewList crew={crewMembers} />
+
+        <Pressable accessibilityLabel="Sign out" accessibilityRole="button" disabled={isSigningOut} onPress={() => void handleSignOut()} style={({ pressed }) => [styles.signOutButton, pressed && styles.pressed]}>
+          {isSigningOut ? <ActivityIndicator color={Colors.text} /> : <Text style={styles.signOutText}>Sign Out</Text>}
+        </Pressable>
       </ScrollView>
     </SafeAreaView>
   );
@@ -43,11 +94,17 @@ const styles = StyleSheet.create({
   content: { padding: Spacing.xl, paddingBottom: Spacing.xxxl, paddingTop: Spacing.xxxl },
   profileHeader: { alignItems: "center", flexDirection: "row", gap: Spacing.lg, marginBottom: Spacing.xxxl },
   avatar: { alignItems: "center", backgroundColor: Colors.surface, borderColor: Colors.border, borderRadius: Radius.pill, borderWidth: 1, height: 88, justifyContent: "center", width: 88 },
+  identity: { flex: 1 },
   eyebrow: { color: Colors.textSecondary, ...Typography.label, letterSpacing: 1 },
   title: { color: Colors.text, ...Typography.display, marginTop: Spacing.xs },
   sectionTitle: { color: Colors.text, ...Typography.heading, marginBottom: Spacing.lg, marginTop: Spacing.xxxl },
+  loading: { marginTop: Spacing.xl },
+  error: { color: Colors.danger, ...Typography.body },
   statsGrid: { flexDirection: "row", flexWrap: "wrap", gap: Spacing.md },
   stat: { minHeight: 88, paddingVertical: Spacing.md, width: "47%" },
   statValue: { color: Colors.text, ...Typography.heading },
   statLabel: { color: Colors.textSecondary, ...Typography.label, fontWeight: "400", marginTop: Spacing.sm },
+  signOutButton: { alignItems: "center", backgroundColor: Colors.surface, borderColor: Colors.border, borderRadius: Radius.pill, borderWidth: 1, justifyContent: "center", marginTop: Spacing.xxxl, minHeight: 54 },
+  signOutText: { color: Colors.text, ...Typography.heading },
+  pressed: { opacity: 0.7 },
 });

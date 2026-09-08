@@ -1,11 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useState } from "react";
-import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Mood, MoodSelector } from "../components/MoodSelector";
 import { ScoreSelector } from "../components/ScoreSelector";
 import { RootStackParamList } from "../navigation/types";
+import { saveExperience } from "../services/experiences";
 import { Colors } from "../theme/colors";
 import { Radius } from "../theme/radius";
 import { Spacing } from "../theme/spacing";
@@ -26,11 +27,22 @@ export default function ExperienceFormScreen({ navigation, route }: ExperienceFo
   const [mood, setMood] = useState("relax");
   const [notes, setNotes] = useState("");
   const [containsSpoilers, setContainsSpoilers] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const saveExperience = () => {
-    Alert.alert("Experience logged", `${route.params.movieTitle} was added to your BudWatch identity.`, [
-      { text: "Done", onPress: () => navigation.goBack() },
-    ]);
+  const submit = async () => {
+    setError(null);
+    setIsSaving(true);
+    try {
+      await saveExperience({ movieId: route.params.movieId, budScore: score, mood, notes, containsSpoilers });
+      Alert.alert("Experience logged", `${route.params.movieTitle} was added to your BudWatch identity.`, [
+        { text: "Done", onPress: () => navigation.goBack() },
+      ]);
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : "Unable to save your experience.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -65,8 +77,10 @@ export default function ExperienceFormScreen({ navigation, route }: ExperienceFo
             <Switch accessibilityLabel="Contains spoilers" onValueChange={setContainsSpoilers} thumbColor={Colors.text} trackColor={{ false: Colors.border, true: Colors.primary }} value={containsSpoilers} />
           </View>
 
-          <Pressable accessibilityLabel="Save experience" accessibilityRole="button" onPress={saveExperience} style={({ pressed }) => [styles.saveButton, pressed && styles.pressed]}>
-            <Text style={styles.saveText}>Save Experience</Text>
+          {error ? <Text accessibilityRole="alert" style={styles.error}>{error}</Text> : null}
+
+          <Pressable accessibilityLabel="Save experience" accessibilityRole="button" disabled={isSaving} onPress={() => void submit()} style={({ pressed }) => [styles.saveButton, (pressed || isSaving) && styles.pressed]}>
+            {isSaving ? <ActivityIndicator color={Colors.background} /> : <Text style={styles.saveText}>Save Experience</Text>}
           </Pressable>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -89,6 +103,7 @@ const styles = StyleSheet.create({
   spoilerCopy: { flex: 1, paddingRight: Spacing.lg },
   spoilerTitle: { color: Colors.text, ...Typography.body, fontWeight: "700" },
   spoilerDescription: { color: Colors.textSecondary, ...Typography.label, fontWeight: "400", marginTop: Spacing.xs },
+  error: { color: Colors.danger, ...Typography.body, marginTop: Spacing.xl },
   saveButton: { alignItems: "center", backgroundColor: Colors.primary, borderRadius: Radius.pill, justifyContent: "center", marginTop: Spacing.xxl, minHeight: 54 },
   saveText: { color: Colors.background, ...Typography.heading },
   pressed: { opacity: 0.8 },

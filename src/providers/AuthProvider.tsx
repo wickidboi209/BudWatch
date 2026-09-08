@@ -50,6 +50,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
       if (error) throw error;
       return data.user;
     },
+    sendPasswordReset: async (email: string) => {
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim());
+      if (error) throw error;
+    },
   }), [isLoading, session]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

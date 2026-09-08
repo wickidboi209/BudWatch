@@ -2,11 +2,11 @@ import { Ionicons } from "@expo/vector-icons";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Dimensions, FlatList, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Movie, MoviePosterCard } from "../components/MoviePosterCard";
+import { Movie } from "../components/MoviePosterCard";
+import { MoviePosterGrid } from "../components/MoviePosterGrid";
 import { RootStackParamList } from "../navigation/types";
-import { TAB_BAR_CLEARANCE } from "../navigation/tabBarMetrics";
 import { fetchSearchMovies } from "../services/tmdb";
 import { Colors } from "../theme/colors";
 import { Radius } from "../theme/radius";
@@ -14,10 +14,6 @@ import { Spacing } from "../theme/spacing";
 import { Typography } from "../theme/typography";
 
 const SEARCH_DEBOUNCE_MS = 400;
-const CARD_WIDTH = 156;
-const GRID_GAP = Spacing.lg;
-const GRID_PADDING = Spacing.lg;
-const numColumns = Math.max(2, Math.floor((Dimensions.get("window").width - GRID_PADDING * 2 + GRID_GAP) / (CARD_WIDTH + GRID_GAP)));
 
 export default function SearchScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -80,15 +76,10 @@ export default function SearchScreen() {
         </View>
       </View>
 
-      <FlatList
-        columnWrapperStyle={styles.row}
-        contentContainerStyle={styles.content}
-        data={results ?? []}
-        keyExtractor={(movie) => movie.id}
+      <MoviePosterGrid
         ListEmptyComponent={<SearchEmptyState error={error} hasQuery={query.trim().length > 0} isLoading={isLoading} />}
-        numColumns={numColumns}
-        renderItem={({ item }) => <View style={styles.cardSlot}><MoviePosterCard movie={item} onPress={openMovie} /></View>}
-        showsVerticalScrollIndicator={false}
+        movies={results ?? []}
+        onMoviePress={openMovie}
       />
     </SafeAreaView>
   );
@@ -107,9 +98,6 @@ const styles = StyleSheet.create({
   title: { color: Colors.text, letterSpacing: -0.4, ...Typography.display },
   searchBar: { alignItems: "center", backgroundColor: Colors.surfaceElevated, borderColor: Colors.hairlineStrong, borderRadius: Radius.pill, borderWidth: 1, flexDirection: "row", gap: Spacing.sm, marginTop: Spacing.lg, minHeight: 50, paddingHorizontal: Spacing.lg },
   input: { color: Colors.text, flex: 1, ...Typography.body, paddingVertical: Spacing.sm },
-  content: { flexGrow: 1, paddingBottom: Spacing.xxxl + TAB_BAR_CLEARANCE, paddingHorizontal: GRID_PADDING, paddingTop: Spacing.xl },
-  row: { gap: GRID_GAP, justifyContent: "flex-start" },
-  cardSlot: { marginBottom: Spacing.xl },
   emptyState: { alignItems: "center", flex: 1, justifyContent: "center", paddingTop: Spacing.xxxl * 2 },
   mark: { alignItems: "center", backgroundColor: Colors.surface, borderColor: Colors.hairlineStrong, borderRadius: Radius.lg, borderWidth: 1, height: 64, justifyContent: "center", marginBottom: Spacing.xl, width: 64 },
   emptyTitle: { color: Colors.text, ...Typography.title, fontWeight: "700", textAlign: "center" },

@@ -11,6 +11,7 @@ import { MovieMetadata } from "../components/movie-detail/MovieMetadata";
 import { ReviewButton } from "../components/movie-detail/ReviewButton";
 import { fetchMovieDetailsById, MovieDetails } from "../services/tmdb";
 import { activityFeed } from "../services/social";
+import { addToWatchlist, isInWatchlist, removeFromWatchlist } from "../services/watchlist";
 import { RootStackParamList } from "../navigation/types";
 import { Colors } from "../theme/colors";
 import { Radius } from "../theme/radius";
@@ -26,6 +27,8 @@ export default function MovieDetailScreen({ navigation, route }: MovieDetailScre
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [retryCount, setRetryCount] = useState(0);
+  const [isSaved, setIsSaved] = useState(false);
+  const [isTogglingSave, setIsTogglingSave] = useState(false);
   const scrollY = useRef(new Animated.Value(0)).current;
   const reducedMotion = useReducedMotion();
 
@@ -50,6 +53,28 @@ export default function MovieDetailScreen({ navigation, route }: MovieDetailScre
     };
   }, [retryCount, route.params.movieId]);
 
+  useEffect(() => {
+    let isCurrentRequest = true;
+    isInWatchlist(route.params.movieId)
+      .then((saved) => { if (isCurrentRequest) setIsSaved(saved); })
+      .catch(() => {});
+    return () => { isCurrentRequest = false; };
+  }, [route.params.movieId]);
+
+  const toggleSave = async () => {
+    const nextSaved = !isSaved;
+    setIsSaved(nextSaved);
+    setIsTogglingSave(true);
+    try {
+      if (nextSaved) await addToWatchlist(route.params.movieId);
+      else await removeFromWatchlist(route.params.movieId);
+    } catch {
+      setIsSaved(!nextSaved);
+    } finally {
+      setIsTogglingSave(false);
+    }
+  };
+
   if (isLoading) return <LoadingState onBack={() => navigation.goBack()} />;
 
   if (error || !movie) {
@@ -64,6 +89,9 @@ export default function MovieDetailScreen({ navigation, route }: MovieDetailScre
           <HeroBackdrop image={movie.backdropImage} title={movie.title} />
           <Pressable accessibilityLabel="Go back" accessibilityRole="button" hitSlop={Spacing.sm} onPress={() => navigation.goBack()} style={styles.backButton}>
             <Ionicons color={Colors.text} name="arrow-back" size={22} />
+          </Pressable>
+          <Pressable accessibilityLabel={isSaved ? "Remove from watchlist" : "Add to watchlist"} accessibilityRole="button" disabled={isTogglingSave} hitSlop={Spacing.sm} onPress={() => void toggleSave()} style={styles.saveButton}>
+            <Ionicons color={isSaved ? Colors.primary : Colors.text} name={isSaved ? "heart" : "heart-outline"} size={22} />
           </Pressable>
         </Animated.View>
 
@@ -141,6 +169,7 @@ const styles = StyleSheet.create({
   content: { paddingBottom: Spacing.xxxl + Spacing.xxxl },
   hero: { position: "relative" },
   backButton: { alignItems: "center", backgroundColor: Colors.overlay, borderColor: Colors.hairlineStrong, borderRadius: Radius.pill, borderWidth: 1, height: 44, justifyContent: "center", left: Spacing.lg, position: "absolute", top: Spacing.lg, width: 44 },
+  saveButton: { alignItems: "center", backgroundColor: Colors.overlay, borderColor: Colors.hairlineStrong, borderRadius: Radius.pill, borderWidth: 1, height: 44, justifyContent: "center", position: "absolute", right: Spacing.lg, top: Spacing.lg, width: 44 },
   detailBody: { paddingHorizontal: Spacing.xl },
   titleRow: { flexDirection: "row", marginTop: -Spacing.xxxl },
   poster: { borderColor: Colors.hairlineStrong, borderRadius: Radius.md, borderWidth: 1, height: 168, width: 112, ...Shadows.card },

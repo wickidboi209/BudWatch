@@ -11,7 +11,7 @@ export function VibeTabButton({ accessibilityState, onPress, testID }: BottomTab
   return (
     <Pressable accessibilityRole="button" accessibilityState={accessibilityState} onPress={onPress} style={styles.wrapper} testID={testID}>
       <LinearGradient colors={["#A05EE0", "#3FC2B8", "#F0875A"]} end={{ x: 1, y: 1 }} start={{ x: 0, y: 0 }} style={[styles.orb, focused && styles.orbFocused]}>
-        <VibeFace color={Colors.text} size={28} vibeId="questioning" />
+        <VibeFace color={Colors.text} size={38} vibeId="questioning" />
       </LinearGradient>
     </Pressable>
   );

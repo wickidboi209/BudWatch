@@ -112,13 +112,11 @@ function renderFace(vibeId: string, stroke: string, common: { fill: string; stro
       </>;
 
     case "questioning":
-      // neutral curious eyes + a shrug-tilted mouth + a floating "?"
+      // big neutral curious eyes + a shrug-tilted mouth
       return <>
-        <Circle cx={35} cy={46} fill={stroke} r={5} />
-        <Circle cx={65} cy={46} fill={stroke} r={5} />
-        <Path d="M38 66 Q50 71 60 64" {...common} />
-        <Path d="M68 12 Q68 6 75 6 Q82 6 82 12 Q82 18 75 20 L75 27" {...common} strokeWidth={5} />
-        <Circle cx={75} cy={36} fill={stroke} r={3.5} stroke="none" />
+        <Circle cx={30} cy={50} fill={stroke} r={6.5} />
+        <Circle cx={70} cy={50} fill={stroke} r={6.5} />
+        <Path d="M34 72 Q50 79 66 70" {...common} strokeWidth={7} />
       </>;
 
     case "brain-rot":

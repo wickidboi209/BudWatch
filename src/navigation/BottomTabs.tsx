@@ -42,7 +42,7 @@ export default function BottomTabs() {
             right: 16,
           },
 
-          tabBarItemStyle: { paddingBottom: 0, paddingTop: 10 },
+          tabBarItemStyle: { paddingBottom: 0, paddingTop: 6 },
 
           tabBarBackground: () => <BlurView intensity={70} tint="dark" style={styles.tabBarBackground} />,
 

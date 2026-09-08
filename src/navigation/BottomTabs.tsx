@@ -1,7 +1,7 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import HomeScreen from "../screens/HomeScreen";
 import SearchScreen from "../screens/SearchScreen";
@@ -44,7 +44,11 @@ export default function BottomTabs() {
 
           tabBarItemStyle: { paddingBottom: 0, paddingTop: 6 },
 
-          tabBarBackground: () => <BlurView intensity={70} tint="dark" style={styles.tabBarBackground} />,
+          tabBarBackground: () => (
+            <View style={styles.tabBarBackgroundClip}>
+              <BlurView intensity={70} tint="dark" style={styles.tabBarBackgroundBlur} />
+            </View>
+          ),
 
           tabBarActiveTintColor: Colors.primary,
           tabBarInactiveTintColor: Colors.textSecondary,
@@ -69,5 +73,6 @@ export default function BottomTabs() {
 }
 
 const styles = StyleSheet.create({
-  tabBarBackground: { bottom: 0, left: 0, position: "absolute", right: 0, top: 0, backgroundColor: Colors.overlay, borderColor: Colors.hairlineStrong, borderRadius: Radius.pill, borderWidth: 1, overflow: "hidden", ...Shadows.card },
+  tabBarBackgroundClip: { bottom: 0, left: 0, position: "absolute", right: 0, top: 0, borderColor: Colors.hairlineStrong, borderRadius: Radius.pill, borderWidth: 1, overflow: "hidden", ...Shadows.card },
+  tabBarBackgroundBlur: { backgroundColor: Colors.overlay, flex: 1 },
 });

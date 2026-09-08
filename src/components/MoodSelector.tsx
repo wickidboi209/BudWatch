@@ -14,7 +14,7 @@ type MoodSelectorProps = { moods: Mood[]; selectedMood: string; onMoodChange: (m
 
 export function MoodSelector({ compact = false, moods, selectedMood, onMoodChange }: MoodSelectorProps) {
   return (
-    <ScrollView contentContainerStyle={styles.content} horizontal showsHorizontalScrollIndicator={false}>
+    <ScrollView contentContainerStyle={[styles.content, compact && styles.compactContent]} horizontal showsHorizontalScrollIndicator={false}>
       {moods.map((mood) => {
         const isSelected = mood.id === selectedMood;
         return <MoodChip compact={compact} isSelected={isSelected} key={mood.id} mood={mood} onPress={() => onMoodChange(mood.id)} />;
@@ -58,6 +58,7 @@ function MoodChip({ compact, isSelected, mood, onPress }: { compact: boolean; is
 
 const styles = StyleSheet.create({
   content: { gap: Spacing.sm, paddingRight: Spacing.xl },
+  compactContent: { paddingLeft: Spacing.xl },
   item: { backgroundColor: Colors.surface, borderColor: Colors.hairline, borderRadius: Radius.lg, borderWidth: 1, flexDirection: "row", gap: Spacing.sm, minHeight: 76, paddingHorizontal: Spacing.md, paddingVertical: Spacing.md, width: 148 },
   compactItem: { justifyContent: "center", minHeight: 44, paddingHorizontal: Spacing.lg, paddingVertical: Spacing.sm, width: "auto" },
   selected: { backgroundColor: Colors.primary, borderColor: Colors.primary, ...Shadows.card },

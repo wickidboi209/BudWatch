@@ -192,11 +192,13 @@ export async function fetchWatchProviders(movieId: string, region = "US"): Promi
   };
 }
 
-export async function fetchMoviesForVibe(genreIds: number[]): Promise<Movie[]> {
+export type VibeMoviesPage = { movies: Movie[]; page: number; totalPages: number };
+
+export async function fetchMoviesForVibe(genreIds: number[], page = 1): Promise<VibeMoviesPage> {
   const apiKey = getApiKey();
-  const q = `?api_key=${encodeURIComponent(apiKey)}&language=en-US&page=1&sort_by=popularity.desc&vote_count.gte=100&with_genres=${genreIds.join("|")}`;
+  const q = `?api_key=${encodeURIComponent(apiKey)}&language=en-US&page=${page}&sort_by=popularity.desc&vote_count.gte=100&with_genres=${genreIds.join("|")}`;
   const response = await fetchMovies(`/discover/movie${q}`);
-  return mapMovies(response);
+  return { movies: mapMovies(response), page: response.page, totalPages: response.total_pages };
 }
 
 export async function fetchSearchMovies(query: string): Promise<Movie[]> {

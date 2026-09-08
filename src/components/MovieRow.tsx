@@ -24,4 +24,4 @@ export const MovieRow = memo(function MovieRow({ movies, onMoviePress }: MovieRo
   );
 });
 
-const styles = StyleSheet.create({ content: { paddingRight: Spacing.xl }, separator: { width: Spacing.lg } });
+const styles = StyleSheet.create({ content: { paddingHorizontal: Spacing.xl }, separator: { width: Spacing.lg } });

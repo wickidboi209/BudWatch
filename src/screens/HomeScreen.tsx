@@ -64,7 +64,7 @@ export default function HomeScreen() {
     try {
       const genreIds = getVibe(vibeId)?.genreIds ?? [];
       const result = await fetchMoviesForVibe(genreIds);
-      if (currentRequestId === vibeRequestId.current) setVibeMovies(result);
+      if (currentRequestId === vibeRequestId.current) setVibeMovies(result.movies);
     } catch (requestError: unknown) {
       if (__DEV__) console.warn(`[HomeScreen] Vibe movie request failed: ${requestError instanceof Error ? requestError.message : "unknown error"}`);
     } finally {
@@ -106,7 +106,10 @@ export default function HomeScreen() {
 
       {isInitialLoading ? <MovieFeedSkeleton /> : error && !movies ? <View style={styles.errorState}><Text style={styles.errorTitle}>Your next movie night is waiting.</Text><Text style={styles.errorText}>We could not find the feed right now.</Text><Pressable accessibilityRole="button" onPress={() => setRetryCount((count) => count + 1)} style={styles.retryButton}><Text style={styles.retryText}>Try again</Text></Pressable></View> : <Animated.View style={{ opacity: contentOpacity }}><View style={styles.hero}>{heroMovie ? <HeroMovieBanner movie={heroMovie} onDetailsPress={openMovie} onPress={openMovie} /> : <HeroMovieFallback onRetry={() => setRetryCount((count) => count + 1)} />}</View></Animated.View>}
 
-      <View style={styles.question}><Text style={styles.questionText}>What kind of night are you having?</Text><MoodSelector compact moods={VIBES} onMoodChange={setSelectedVibeId} selectedMood={selectedMood} /></View>
+      <View style={styles.question}>
+        <Text style={styles.questionText}>What kind of night are you having?</Text>
+        <View style={styles.bleed}><MoodSelector compact moods={VIBES} onMoodChange={setSelectedVibeId} selectedMood={selectedMood} /></View>
+      </View>
 
       {!isInitialLoading && movies ? <Animated.View style={[styles.rows, { opacity: contentOpacity }]}>
         <HomeRow title="For You" movies={vibeMovies?.slice(1, 6) ?? []} onMoviePress={openMovie} />
@@ -119,7 +122,7 @@ export default function HomeScreen() {
 
 function HomeRow({ title, movies, onMoviePress }: HomeRowProps) {
   if (!movies.length) return null;
-  return <View style={styles.row}><SectionHeader title={title} /><MovieRow movies={movies} onMoviePress={onMoviePress} /></View>;
+  return <View style={styles.row}><SectionHeader title={title} /><View style={styles.bleed}><MovieRow movies={movies} onMoviePress={onMoviePress} /></View></View>;
 }
 
 const styles = StyleSheet.create({
@@ -129,6 +132,7 @@ const styles = StyleSheet.create({
   profileButton: { alignItems: "center", backgroundColor: Colors.surface, borderColor: Colors.hairline, borderRadius: Radius.pill, borderWidth: 1, height: 40, justifyContent: "center", width: 40 },
   pressed: { opacity: 0.7 },
   hero: { marginHorizontal: -Spacing.xl, marginTop: Spacing.lg },
+  bleed: { marginHorizontal: -Spacing.xl },
   question: { marginTop: Spacing.xxl },
   questionText: { color: Colors.text, letterSpacing: -0.3, ...Typography.title, fontWeight: "700", marginBottom: Spacing.lg },
   rows: { marginTop: Spacing.xxxl },

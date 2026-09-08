@@ -1,11 +1,13 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useEffect } from "react";
+import * as SplashScreen from "expo-splash-screen";
+import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Platform, StyleSheet, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import BottomTabs from "./src/navigation/BottomTabs";
 import AuthFlow from "./src/navigation/AuthFlow";
+import { AnimatedSplash } from "./src/components/AnimatedSplash";
 import { useAuth } from "./src/hooks/useAuth";
 import { RootStackParamList } from "./src/navigation/types";
 import MovieDetailScreen from "./src/screens/MovieDetailScreen";
@@ -16,6 +18,8 @@ import { VibeProvider } from "./src/providers/VibeProvider";
 import { Colors } from "./src/theme/colors";
 
 const DEV_BYPASS_AUTH = false;
+
+void SplashScreen.preventAutoHideAsync().catch(() => {});
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -44,6 +48,12 @@ export default function App() {
 
 function AppContent() {
   const { isLoading, user } = useAuth();
+  const [showIntro, setShowIntro] = useState(true);
+  const finishIntro = useCallback(() => setShowIntro(false), []);
+
+  if (showIntro) {
+    return <AnimatedSplash onFinish={finishIntro} />;
+  }
 
   if (isLoading) {
     return <View style={styles.loading}><ActivityIndicator color={Colors.primary} size="large" /></View>;

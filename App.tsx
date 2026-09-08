@@ -12,7 +12,7 @@ import ExperienceFormScreen from "./src/screens/ExperienceFormScreen";
 import { AuthProvider } from "./src/providers/AuthProvider";
 import { Colors } from "./src/theme/colors";
 
-const DEV_BYPASS_AUTH = true;
+const DEV_BYPASS_AUTH = false;
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 

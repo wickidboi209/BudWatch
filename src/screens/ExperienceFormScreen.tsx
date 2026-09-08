@@ -7,7 +7,7 @@ import { MoodSelector } from "../components/MoodSelector";
 import { ScoreSelector } from "../components/ScoreSelector";
 import { VIBES } from "../config/vibes";
 import { RootStackParamList } from "../navigation/types";
-import { saveExperience } from "../services/experiences";
+import { saveExperience, updateExperience } from "../services/experiences";
 import { Colors } from "../theme/colors";
 import { Radius } from "../theme/radius";
 import { Shadows } from "../theme/shadows";
@@ -17,10 +17,11 @@ import { Typography } from "../theme/typography";
 type ExperienceFormScreenProps = NativeStackScreenProps<RootStackParamList, "ExperienceForm">;
 
 export default function ExperienceFormScreen({ navigation, route }: ExperienceFormScreenProps) {
-  const [score, setScore] = useState(7);
-  const [mood, setMood] = useState(VIBES[0].id);
-  const [notes, setNotes] = useState("");
-  const [containsSpoilers, setContainsSpoilers] = useState(false);
+  const editing = route.params.editExperience;
+  const [score, setScore] = useState(editing?.budScore ?? 7);
+  const [mood, setMood] = useState(editing?.mood ?? VIBES[0].id);
+  const [notes, setNotes] = useState(editing?.notes ?? "");
+  const [containsSpoilers, setContainsSpoilers] = useState(editing?.containsSpoilers ?? false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isNotesFocused, setIsNotesFocused] = useState(false);
@@ -29,10 +30,17 @@ export default function ExperienceFormScreen({ navigation, route }: ExperienceFo
     setError(null);
     setIsSaving(true);
     try {
-      await saveExperience({ movieId: route.params.movieId, budScore: score, mood, notes, containsSpoilers });
-      Alert.alert("Experience logged", `${route.params.movieTitle} was added to your BudWatch identity.`, [
-        { text: "Done", onPress: () => navigation.goBack() },
-      ]);
+      if (editing) {
+        await updateExperience(editing.id, { budScore: score, mood, notes, containsSpoilers });
+        Alert.alert("Experience updated", `Your log for ${route.params.movieTitle} was updated.`, [
+          { text: "Done", onPress: () => navigation.goBack() },
+        ]);
+      } else {
+        await saveExperience({ movieId: route.params.movieId, budScore: score, mood, notes, containsSpoilers });
+        Alert.alert("Experience logged", `${route.params.movieTitle} was added to your BudWatch identity.`, [
+          { text: "Done", onPress: () => navigation.goBack() },
+        ]);
+      }
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "Unable to save your experience.");
     } finally {
@@ -49,7 +57,7 @@ export default function ExperienceFormScreen({ navigation, route }: ExperienceFo
               <Ionicons color={Colors.text} name="arrow-back" size={22} />
             </Pressable>
             <View style={styles.headerCopy}>
-              <Text style={styles.eyebrow}>LOG EXPERIENCE</Text>
+              <Text style={styles.eyebrow}>{editing ? "EDIT EXPERIENCE" : "LOG EXPERIENCE"}</Text>
               <Text numberOfLines={2} style={styles.title}>{route.params.movieTitle}</Text>
             </View>
           </View>
@@ -74,8 +82,8 @@ export default function ExperienceFormScreen({ navigation, route }: ExperienceFo
 
           {error ? <Text accessibilityRole="alert" style={styles.error}>{error}</Text> : null}
 
-          <Pressable accessibilityLabel="Save experience" accessibilityRole="button" disabled={isSaving} onPress={() => void submit()} style={({ pressed }) => [styles.saveButton, (pressed || isSaving) && styles.pressed]}>
-            {isSaving ? <ActivityIndicator color={Colors.background} /> : <Text style={styles.saveText}>Save Experience</Text>}
+          <Pressable accessibilityLabel={editing ? "Update experience" : "Save experience"} accessibilityRole="button" disabled={isSaving} onPress={() => void submit()} style={({ pressed }) => [styles.saveButton, (pressed || isSaving) && styles.pressed]}>
+            {isSaving ? <ActivityIndicator color={Colors.background} /> : <Text style={styles.saveText}>{editing ? "Update Experience" : "Save Experience"}</Text>}
           </Pressable>
         </ScrollView>
       </KeyboardAvoidingView>

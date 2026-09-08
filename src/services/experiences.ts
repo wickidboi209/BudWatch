@@ -49,7 +49,7 @@ type ExperienceRow = {
   created_at: string;
 };
 
-type ExperienceWithUserRow = ExperienceRow & { user_id: string };
+export type ExperienceWithUserRow = ExperienceRow & { user_id: string };
 
 type ProfileRow = { id: string; username: string | null; avatar_url: string | null };
 
@@ -70,6 +70,34 @@ async function getCurrentUserId(): Promise<string> {
   if (error) throw error;
   if (!data.user) throw new Error("You need to be signed in to do that.");
   return data.user.id;
+}
+
+export type UpdateExperienceInput = { budScore: number; mood: string; notes: string; containsSpoilers: boolean };
+
+export async function updateExperience(experienceId: string, input: UpdateExperienceInput): Promise<Experience> {
+  const userId = await getCurrentUserId();
+
+  const { data, error } = await supabase
+    .from("experiences")
+    .update({
+      bud_score: input.budScore,
+      mood: input.mood,
+      notes: input.notes,
+      contains_spoilers: input.containsSpoilers,
+    })
+    .eq("id", experienceId)
+    .eq("user_id", userId)
+    .select()
+    .single();
+
+  if (error) throw new Error("Unable to update your experience. Please try again.");
+  return mapExperience(data as ExperienceRow);
+}
+
+export async function deleteExperience(experienceId: string): Promise<void> {
+  const userId = await getCurrentUserId();
+  const { error } = await supabase.from("experiences").delete().eq("id", experienceId).eq("user_id", userId);
+  if (error) throw new Error("Unable to delete your experience. Please try again.");
 }
 
 export async function saveExperience(input: SaveExperienceInput): Promise<Experience> {
@@ -115,7 +143,7 @@ export async function getUserExperienceStats(): Promise<ExperienceStats> {
   return { totalExperiences, averageBudScore, favoriteMood };
 }
 
-async function hydrateActivities(rows: ExperienceWithUserRow[]): Promise<CommunityActivity[]> {
+export async function hydrateActivities(rows: ExperienceWithUserRow[]): Promise<CommunityActivity[]> {
   if (!rows.length) return [];
 
   const userIds = [...new Set(rows.map((row) => row.user_id))];

@@ -41,7 +41,12 @@ export default function WatchlistScreen() {
   return (
     <SafeAreaView edges={["top"]} style={styles.container}>
       <AmbientBackground />
-      <View style={styles.header}><Text style={styles.title}>Watchlist</Text></View>
+      <View style={styles.header}>
+        <Pressable accessibilityLabel="Go back" accessibilityRole="button" hitSlop={Spacing.sm} onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Ionicons color={Colors.text} name="arrow-back" size={22} />
+        </Pressable>
+        <Text style={styles.title}>Watchlist</Text>
+      </View>
       <MoviePosterGrid
         ListEmptyComponent={<WatchlistEmptyState error={error} isLoading={isLoading} onRetry={load} />}
         movies={movies}
@@ -67,7 +72,8 @@ function WatchlistEmptyState({ error, isLoading, onRetry }: { error: string | nu
 
 const styles = StyleSheet.create({
   container: { backgroundColor: Colors.background, flex: 1 },
-  header: { paddingHorizontal: Spacing.xl, paddingTop: Spacing.lg },
+  header: { alignItems: "center", flexDirection: "row", gap: Spacing.md, paddingHorizontal: Spacing.xl, paddingTop: Spacing.lg },
+  backButton: { alignItems: "center", backgroundColor: Colors.surface, borderColor: Colors.hairline, borderRadius: Radius.pill, borderWidth: 1, height: 40, justifyContent: "center", width: 40 },
   title: { color: Colors.textSecondary, ...Typography.label, letterSpacing: 1, textTransform: "uppercase" },
   emptyState: { alignItems: "center", flex: 1, justifyContent: "center", paddingTop: Spacing.xxxl * 2 },
   mark: { alignItems: "center", backgroundColor: Colors.surface, borderColor: Colors.hairlineStrong, borderRadius: Radius.lg, borderWidth: 1, height: 64, justifyContent: "center", marginBottom: Spacing.xl, width: 64 },

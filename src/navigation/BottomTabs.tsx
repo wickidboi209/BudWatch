@@ -6,7 +6,7 @@ import { StyleSheet, View } from "react-native";
 import HomeScreen from "../screens/HomeScreen";
 import SearchScreen from "../screens/SearchScreen";
 import VibeScreen from "../screens/VibeScreen";
-import WatchlistScreen from "../screens/WatchlistScreen";
+import CrewScreen from "../screens/CrewScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import { Colors } from "../theme/colors";
 import { Radius } from "../theme/radius";
@@ -19,7 +19,7 @@ const Tab = createBottomTabNavigator();
 const icons: Record<string, { active: keyof typeof Ionicons.glyphMap; inactive: keyof typeof Ionicons.glyphMap }> = {
   Home: { active: "home", inactive: "home-outline" },
   Search: { active: "search", inactive: "search-outline" },
-  Watchlist: { active: "heart", inactive: "heart-outline" },
+  Crew: { active: "people", inactive: "people-outline" },
   Profile: { active: "person", inactive: "person-outline" },
 };
 
@@ -66,7 +66,7 @@ export default function BottomTabs() {
           name="Vibe"
           options={{ tabBarButton: (props) => <VibeTabButton {...props} /> }}
         />
-        <Tab.Screen name="Watchlist" component={WatchlistScreen} />
+        <Tab.Screen name="Crew" component={CrewScreen} />
         <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );

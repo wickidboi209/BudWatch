@@ -12,8 +12,9 @@ import { MovieMetadata } from "../components/movie-detail/MovieMetadata";
 import { ReviewButton } from "../components/movie-detail/ReviewButton";
 import { WatchProviders } from "../components/movie-detail/WatchProviders";
 import { fetchMovieDetailsById, fetchWatchProviders, MovieDetails, WatchProviders as WatchProvidersData } from "../services/tmdb";
-import { CommunityActivity, getExperiencesForMovie } from "../services/experiences";
+import { CommunityActivity, deleteExperience, getExperiencesForMovie } from "../services/experiences";
 import { addToWatchlist, isInWatchlist, removeFromWatchlist } from "../services/watchlist";
+import { useAuth } from "../hooks/useAuth";
 import { RootStackParamList } from "../navigation/types";
 import { Colors } from "../theme/colors";
 import { Radius } from "../theme/radius";
@@ -25,6 +26,7 @@ import { useReducedMotion } from "../hooks/useReducedMotion";
 type MovieDetailScreenProps = NativeStackScreenProps<RootStackParamList, "MovieDetail">;
 
 export default function MovieDetailScreen({ navigation, route }: MovieDetailScreenProps) {
+  const { user } = useAuth();
   const [movie, setMovie] = useState<MovieDetails | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -82,6 +84,19 @@ export default function MovieDetailScreen({ navigation, route }: MovieDetailScre
 
     return () => { isCurrentRequest = false; };
   }, [route.params.movieId]));
+
+  const handleEditActivity = (activity: CommunityActivity) => {
+    navigation.navigate("ExperienceForm", {
+      movieId: activity.movie.id,
+      movieTitle: activity.movie.title,
+      editExperience: { id: activity.id, budScore: activity.budScore, mood: activity.mood, notes: activity.notes, containsSpoilers: activity.containsSpoilers },
+    });
+  };
+
+  const handleDeleteActivity = (activity: CommunityActivity) => {
+    setActivities((current) => current.filter((item) => item.id !== activity.id));
+    deleteExperience(activity.id).catch(() => {});
+  };
 
   const toggleSave = async () => {
     const nextSaved = !isSaved;
@@ -153,7 +168,7 @@ export default function MovieDetailScreen({ navigation, route }: MovieDetailScre
           {isLoadingActivities ? (
             <ActivityIndicator color={Colors.primary} style={styles.activitiesLoading} />
           ) : activities.length ? (
-            activities.map((activity) => <ActivityCard activity={activity} key={activity.id} />)
+            activities.map((activity) => <ActivityCard activity={activity} currentUserId={user?.id} key={activity.id} onDelete={handleDeleteActivity} onEdit={handleEditActivity} />)
           ) : (
             <Text style={styles.overview}>No one has logged this movie yet — be the first.</Text>
           )}

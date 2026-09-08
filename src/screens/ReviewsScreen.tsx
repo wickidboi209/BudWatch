@@ -5,7 +5,8 @@ import { useFocusEffect } from "@react-navigation/native";
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ActivityFeed } from "../components/social/ActivityFeed";
-import { CommunityActivity, getCommunityActivityFeed } from "../services/experiences";
+import { useAuth } from "../hooks/useAuth";
+import { CommunityActivity, deleteExperience, getCommunityActivityFeed } from "../services/experiences";
 import { RootStackParamList } from "../navigation/types";
 import { Colors } from "../theme/colors";
 import { Radius } from "../theme/radius";
@@ -15,6 +16,7 @@ import { Typography } from "../theme/typography";
 type ReviewsScreenProps = NativeStackScreenProps<RootStackParamList, "CommunityFeed">;
 
 export default function ReviewsScreen({ navigation }: ReviewsScreenProps) {
+  const { user } = useAuth();
   const [activities, setActivities] = useState<CommunityActivity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -30,6 +32,19 @@ export default function ReviewsScreen({ navigation }: ReviewsScreenProps) {
   }, []);
 
   useFocusEffect(useCallback(() => { load(); }, [load]));
+
+  const handleEdit = (activity: CommunityActivity) => {
+    navigation.navigate("ExperienceForm", {
+      movieId: activity.movie.id,
+      movieTitle: activity.movie.title,
+      editExperience: { id: activity.id, budScore: activity.budScore, mood: activity.mood, notes: activity.notes, containsSpoilers: activity.containsSpoilers },
+    });
+  };
+
+  const handleDelete = (activity: CommunityActivity) => {
+    setActivities((current) => current.filter((item) => item.id !== activity.id));
+    deleteExperience(activity.id).catch(() => load());
+  };
 
   return (
     <SafeAreaView edges={["top"]} style={styles.container}>
@@ -50,11 +65,14 @@ export default function ReviewsScreen({ navigation }: ReviewsScreenProps) {
       ) : (
         <ActivityFeed
           activities={activities}
+          currentUserId={user?.id}
           ListEmptyComponent={<View style={styles.state}>
             <View style={styles.mark}><Ionicons color={Colors.text} name="people" size={26} /></View>
             <Text style={styles.stateTitle}>No activity yet.</Text>
             <Text style={styles.stateText}>When someone logs a movie, it'll show up here.</Text>
           </View>}
+          onDelete={handleDelete}
+          onEdit={handleEdit}
           onRefresh={() => load(true)}
           refreshing={isRefreshing}
           tabBarClearance={false}

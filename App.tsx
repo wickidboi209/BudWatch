@@ -14,6 +14,8 @@ import MovieDetailScreen from "./src/screens/MovieDetailScreen";
 import ExperienceFormScreen from "./src/screens/ExperienceFormScreen";
 import VibeResultsScreen from "./src/screens/VibeResultsScreen";
 import CommunityFeedScreen from "./src/screens/ReviewsScreen";
+import WatchlistScreen from "./src/screens/WatchlistScreen";
+import CrewDetailScreen from "./src/screens/CrewDetailScreen";
 import { AuthProvider } from "./src/providers/AuthProvider";
 import { VibeProvider } from "./src/providers/VibeProvider";
 import { Colors } from "./src/theme/colors";
@@ -70,6 +72,8 @@ function AppContent() {
         <Stack.Screen component={ExperienceFormScreen} name="ExperienceForm" />
         <Stack.Screen component={VibeResultsScreen} name="VibeResults" />
         <Stack.Screen component={CommunityFeedScreen} name="CommunityFeed" />
+        <Stack.Screen component={WatchlistScreen} name="Watchlist" />
+        <Stack.Screen component={CrewDetailScreen} name="CrewDetail" />
       </Stack.Navigator>
     </NavigationContainer>
   );

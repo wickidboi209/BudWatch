@@ -73,7 +73,16 @@ export default function ProfileScreen() {
           </>
         )}
 
-        <Pressable accessibilityLabel="Open community activity" accessibilityRole="button" onPress={() => navigation.navigate("CommunityFeed")} style={({ pressed }) => [styles.communityButton, pressed && styles.pressed]}>
+        <Pressable accessibilityLabel="Open your watchlist" accessibilityRole="button" onPress={() => navigation.navigate("Watchlist")} style={({ pressed }) => [styles.communityButton, pressed && styles.pressed]}>
+          <View style={styles.communityIcon}><Ionicons color={Colors.background} name="heart" size={20} /></View>
+          <View style={styles.communityCopy}>
+            <Text style={styles.communityTitle}>Your Watchlist</Text>
+            <Text style={styles.communitySubtitle}>Movies you've saved for later</Text>
+          </View>
+          <Ionicons color={Colors.textSecondary} name="chevron-forward" size={20} />
+        </Pressable>
+
+        <Pressable accessibilityLabel="Open community activity" accessibilityRole="button" onPress={() => navigation.navigate("CommunityFeed")} style={({ pressed }) => [styles.communityButton, styles.communityButtonStacked, pressed && styles.pressed]}>
           <View style={styles.communityIcon}><Ionicons color={Colors.background} name="people" size={20} /></View>
           <View style={styles.communityCopy}>
             <Text style={styles.communityTitle}>Community Activity</Text>
@@ -110,6 +119,7 @@ const styles = StyleSheet.create({
   statValue: { color: Colors.text, ...Typography.heading },
   statLabel: { color: Colors.textSecondary, ...Typography.label, fontWeight: "400", marginTop: Spacing.sm },
   communityButton: { alignItems: "center", backgroundColor: Colors.surface, borderColor: Colors.hairline, borderRadius: Radius.lg, borderWidth: 1, flexDirection: "row", gap: Spacing.md, marginTop: Spacing.xxxl, padding: Spacing.lg },
+  communityButtonStacked: { marginTop: Spacing.md },
   communityIcon: { alignItems: "center", backgroundColor: Colors.primary, borderRadius: Radius.pill, height: 40, justifyContent: "center", width: 40, ...Shadows.card },
   communityCopy: { flex: 1 },
   communityTitle: { color: Colors.text, ...Typography.body, fontWeight: "700" },

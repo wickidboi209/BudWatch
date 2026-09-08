@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { memo } from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Alert, Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { CommunityActivity } from "../../services/experiences";
 import { getVibe } from "../../config/vibes";
 import { Colors } from "../../theme/colors";
@@ -9,7 +9,12 @@ import { Spacing } from "../../theme/spacing";
 import { Typography } from "../../theme/typography";
 import { VibeFace } from "../VibeFace";
 
-type ActivityCardProps = { activity: CommunityActivity };
+type ActivityCardProps = {
+  activity: CommunityActivity;
+  currentUserId?: string | null;
+  onEdit?: (activity: CommunityActivity) => void;
+  onDelete?: (activity: CommunityActivity) => void;
+};
 
 function timeAgo(isoDate: string): string {
   const diffMs = Date.now() - new Date(isoDate).getTime();
@@ -24,8 +29,16 @@ function timeAgo(isoDate: string): string {
   return `${weeks} wk${weeks === 1 ? "" : "s"} ago`;
 }
 
-export const ActivityCard = memo(function ActivityCard({ activity }: ActivityCardProps) {
+export const ActivityCard = memo(function ActivityCard({ activity, currentUserId, onDelete, onEdit }: ActivityCardProps) {
   const vibe = getVibe(activity.mood);
+  const isOwn = currentUserId != null && activity.userId === currentUserId;
+
+  const confirmDelete = () => {
+    Alert.alert("Delete this experience?", "This can't be undone.", [
+      { text: "Cancel", style: "cancel" },
+      { text: "Delete", style: "destructive", onPress: () => onDelete?.(activity) },
+    ]);
+  };
 
   return <View style={styles.container}>
     <View style={styles.userRow}>
@@ -38,10 +51,14 @@ export const ActivityCard = memo(function ActivityCard({ activity }: ActivityCar
         <Text style={styles.username}>{activity.username}</Text>
         <Text style={styles.timestamp}>{timeAgo(activity.createdAt)}</Text>
       </View>
-      {vibe ? (
-        <View style={styles.moodBadge}>
-          <VibeFace color={Colors.textSecondary} size={14} vibeId={vibe.id} />
-          <Text style={styles.moodLabel}>{vibe.label}</Text>
+      {isOwn ? (
+        <View style={styles.ownControls}>
+          <Pressable accessibilityLabel="Edit experience" accessibilityRole="button" hitSlop={Spacing.sm} onPress={() => onEdit?.(activity)} style={styles.ownButton}>
+            <Ionicons color={Colors.textSecondary} name="pencil-outline" size={16} />
+          </Pressable>
+          <Pressable accessibilityLabel="Delete experience" accessibilityRole="button" hitSlop={Spacing.sm} onPress={confirmDelete} style={styles.ownButton}>
+            <Ionicons color={Colors.danger} name="trash-outline" size={16} />
+          </Pressable>
         </View>
       ) : null}
     </View>
@@ -50,7 +67,16 @@ export const ActivityCard = memo(function ActivityCard({ activity }: ActivityCar
       {activity.movie.image ? <Image accessibilityLabel={`${activity.movie.title} poster`} source={{ uri: activity.movie.image }} style={styles.poster} /> : <View style={styles.poster} />}
       <View style={styles.movieCopy}>
         <Text style={styles.movieTitle}>{activity.movie.title}</Text>
-        <View style={styles.scoreRow}><Ionicons color={Colors.gold} name="leaf" size={12} /><Text style={styles.score}>{activity.budScore}/10 Bud Score</Text></View>
+        <View style={styles.scoreRow}>
+          <Ionicons color={Colors.gold} name="leaf" size={12} />
+          <Text style={styles.score}>{activity.budScore}/10 Bud Score</Text>
+          {vibe ? (
+            <View style={styles.moodBadge}>
+              <VibeFace color={Colors.textSecondary} size={12} vibeId={vibe.id} />
+              <Text style={styles.moodLabel}>{vibe.label}</Text>
+            </View>
+          ) : null}
+        </View>
         {activity.containsSpoilers ? <Text style={styles.spoilerTag}>CONTAINS SPOILERS</Text> : null}
         {activity.notes ? <Text style={styles.experience}>{activity.notes}</Text> : null}
       </View>
@@ -66,13 +92,15 @@ const styles = StyleSheet.create({
   userCopy: { flex: 1, paddingLeft: Spacing.md },
   username: { color: Colors.text, ...Typography.body, fontWeight: "700" },
   timestamp: { color: Colors.textSecondary, ...Typography.label, fontWeight: "400", marginTop: Spacing.xs },
-  moodBadge: { alignItems: "center", backgroundColor: Colors.surface, borderColor: Colors.hairline, borderRadius: Radius.pill, borderWidth: 1, flexDirection: "row", gap: 5, paddingHorizontal: Spacing.sm, paddingVertical: 5 },
+  ownControls: { flexDirection: "row", gap: Spacing.xs },
+  ownButton: { alignItems: "center", backgroundColor: Colors.surface, borderColor: Colors.hairline, borderRadius: Radius.pill, borderWidth: 1, height: 32, justifyContent: "center", width: 32 },
+  moodBadge: { alignItems: "center", backgroundColor: Colors.surface, borderColor: Colors.hairline, borderRadius: Radius.pill, borderWidth: 1, flexDirection: "row", gap: 4, marginLeft: Spacing.sm, paddingHorizontal: Spacing.sm, paddingVertical: 3 },
   moodLabel: { color: Colors.textSecondary, ...Typography.label, fontWeight: "600" },
   movieRow: { flexDirection: "row", marginTop: Spacing.lg },
   poster: { backgroundColor: Colors.surfaceElevated, borderColor: Colors.hairline, borderRadius: Radius.sm, borderWidth: 1, height: 132, width: 88 },
   movieCopy: { flex: 1, paddingLeft: Spacing.md },
   movieTitle: { color: Colors.text, ...Typography.heading },
-  scoreRow: { alignItems: "center", flexDirection: "row", gap: 5, marginTop: Spacing.sm },
+  scoreRow: { alignItems: "center", flexDirection: "row", flexWrap: "wrap", gap: 5, marginTop: Spacing.sm },
   score: { color: Colors.gold, ...Typography.label },
   spoilerTag: { color: Colors.danger, ...Typography.label, letterSpacing: 0.6, marginTop: Spacing.sm },
   experience: { color: Colors.textSecondary, ...Typography.body, marginTop: Spacing.sm },

@@ -1,22 +1,25 @@
 import { Ionicons } from "@expo/vector-icons";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useNavigation } from "@react-navigation/native";
 import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { AmbientBackground } from "../components/AmbientBackground";
 import { BudScoreCard } from "../components/BudScoreCard";
-import { CrewList } from "../components/social/CrewList";
 import { getVibe } from "../config/vibes";
 import { useAuth } from "../hooks/useAuth";
 import { ExperienceStats, getUserExperienceStats } from "../services/experiences";
-import { crewMembers } from "../services/social";
+import { RootStackParamList } from "../navigation/types";
 import { TAB_BAR_CLEARANCE } from "../navigation/tabBarMetrics";
 import { Colors } from "../theme/colors";
 import { Radius } from "../theme/radius";
+import { Shadows } from "../theme/shadows";
 import { Spacing } from "../theme/spacing";
 import { Typography } from "../theme/typography";
 
 export default function ProfileScreen() {
   const { signOut, user } = useAuth();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [stats, setStats] = useState<ExperienceStats | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -70,8 +73,14 @@ export default function ProfileScreen() {
           </>
         )}
 
-        <Text style={styles.sectionTitle}>Crew</Text>
-        <CrewList crew={crewMembers} />
+        <Pressable accessibilityLabel="Open community activity" accessibilityRole="button" onPress={() => navigation.navigate("CommunityFeed")} style={({ pressed }) => [styles.communityButton, pressed && styles.pressed]}>
+          <View style={styles.communityIcon}><Ionicons color={Colors.background} name="people" size={20} /></View>
+          <View style={styles.communityCopy}>
+            <Text style={styles.communityTitle}>Community Activity</Text>
+            <Text style={styles.communitySubtitle}>See what everyone's watching</Text>
+          </View>
+          <Ionicons color={Colors.textSecondary} name="chevron-forward" size={20} />
+        </Pressable>
 
         <Pressable accessibilityLabel="Sign out" accessibilityRole="button" disabled={isSigningOut} onPress={() => void handleSignOut()} style={({ pressed }) => [styles.signOutButton, pressed && styles.pressed]}>
           {isSigningOut ? <ActivityIndicator color={Colors.text} /> : <Text style={styles.signOutText}>Sign Out</Text>}
@@ -100,7 +109,12 @@ const styles = StyleSheet.create({
   stat: { minHeight: 88, paddingVertical: Spacing.md, width: "47%" },
   statValue: { color: Colors.text, ...Typography.heading },
   statLabel: { color: Colors.textSecondary, ...Typography.label, fontWeight: "400", marginTop: Spacing.sm },
-  signOutButton: { alignItems: "center", backgroundColor: Colors.surface, borderColor: Colors.hairlineStrong, borderRadius: Radius.pill, borderWidth: 1, justifyContent: "center", marginTop: Spacing.xxxl, minHeight: 54 },
+  communityButton: { alignItems: "center", backgroundColor: Colors.surface, borderColor: Colors.hairline, borderRadius: Radius.lg, borderWidth: 1, flexDirection: "row", gap: Spacing.md, marginTop: Spacing.xxxl, padding: Spacing.lg },
+  communityIcon: { alignItems: "center", backgroundColor: Colors.primary, borderRadius: Radius.pill, height: 40, justifyContent: "center", width: 40, ...Shadows.card },
+  communityCopy: { flex: 1 },
+  communityTitle: { color: Colors.text, ...Typography.body, fontWeight: "700" },
+  communitySubtitle: { color: Colors.textSecondary, ...Typography.label, fontWeight: "400", marginTop: Spacing.xs },
+  signOutButton: { alignItems: "center", backgroundColor: Colors.surface, borderColor: Colors.hairlineStrong, borderRadius: Radius.pill, borderWidth: 1, justifyContent: "center", marginTop: Spacing.xl, minHeight: 54 },
   signOutText: { color: Colors.text, ...Typography.heading },
   pressed: { opacity: 0.7 },
 });

@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Animated, Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BudScoreCard } from "../components/BudScoreCard";
@@ -11,7 +12,7 @@ import { MovieMetadata } from "../components/movie-detail/MovieMetadata";
 import { ReviewButton } from "../components/movie-detail/ReviewButton";
 import { WatchProviders } from "../components/movie-detail/WatchProviders";
 import { fetchMovieDetailsById, fetchWatchProviders, MovieDetails, WatchProviders as WatchProvidersData } from "../services/tmdb";
-import { activityFeed } from "../services/social";
+import { CommunityActivity, getExperiencesForMovie } from "../services/experiences";
 import { addToWatchlist, isInWatchlist, removeFromWatchlist } from "../services/watchlist";
 import { RootStackParamList } from "../navigation/types";
 import { Colors } from "../theme/colors";
@@ -31,6 +32,8 @@ export default function MovieDetailScreen({ navigation, route }: MovieDetailScre
   const [isSaved, setIsSaved] = useState(false);
   const [isTogglingSave, setIsTogglingSave] = useState(false);
   const [watchProviders, setWatchProviders] = useState<WatchProvidersData | null>(null);
+  const [activities, setActivities] = useState<CommunityActivity[]>([]);
+  const [isLoadingActivities, setIsLoadingActivities] = useState(true);
   const scrollY = useRef(new Animated.Value(0)).current;
   const reducedMotion = useReducedMotion();
 
@@ -57,20 +60,28 @@ export default function MovieDetailScreen({ navigation, route }: MovieDetailScre
 
   useEffect(() => {
     let isCurrentRequest = true;
-    isInWatchlist(route.params.movieId)
-      .then((saved) => { if (isCurrentRequest) setIsSaved(saved); })
-      .catch(() => {});
-    return () => { isCurrentRequest = false; };
-  }, [route.params.movieId]);
-
-  useEffect(() => {
-    let isCurrentRequest = true;
     setWatchProviders(null);
     fetchWatchProviders(route.params.movieId)
       .then((result) => { if (isCurrentRequest) setWatchProviders(result); })
       .catch(() => {});
     return () => { isCurrentRequest = false; };
   }, [route.params.movieId]);
+
+  useFocusEffect(useCallback(() => {
+    let isCurrentRequest = true;
+
+    isInWatchlist(route.params.movieId)
+      .then((saved) => { if (isCurrentRequest) setIsSaved(saved); })
+      .catch(() => {});
+
+    setIsLoadingActivities(true);
+    getExperiencesForMovie(route.params.movieId)
+      .then((result) => { if (isCurrentRequest) setActivities(result); })
+      .catch(() => {})
+      .finally(() => { if (isCurrentRequest) setIsLoadingActivities(false); });
+
+    return () => { isCurrentRequest = false; };
+  }, [route.params.movieId]));
 
   const toggleSave = async () => {
     const nextSaved = !isSaved;
@@ -120,7 +131,10 @@ export default function MovieDetailScreen({ navigation, route }: MovieDetailScre
             <Text style={styles.ratingValue}>★ {movie.rating}</Text>
           </View>
 
-          <BudScoreCard score={null} totalExperiences={0} />
+          <BudScoreCard
+            score={activities.length ? activities.reduce((sum, activity) => sum + activity.budScore, 0) / activities.length : null}
+            totalExperiences={activities.length}
+          />
 
           {watchProviders && (watchProviders.stream.length || watchProviders.rent.length || watchProviders.buy.length) ? (
             <>
@@ -136,7 +150,13 @@ export default function MovieDetailScreen({ navigation, route }: MovieDetailScre
           <CastCarousel cast={movie.cast} />
 
           <Text style={styles.sectionTitle}>Community Experiences</Text>
-          {activityFeed.map((activity) => <ActivityCard activity={activity} key={activity.id} />)}
+          {isLoadingActivities ? (
+            <ActivityIndicator color={Colors.primary} style={styles.activitiesLoading} />
+          ) : activities.length ? (
+            activities.map((activity) => <ActivityCard activity={activity} key={activity.id} />)
+          ) : (
+            <Text style={styles.overview}>No one has logged this movie yet — be the first.</Text>
+          )}
 
         </View>
       </Animated.ScrollView>
@@ -198,6 +218,7 @@ const styles = StyleSheet.create({
   ratingValue: { color: Colors.gold, ...Typography.body, fontWeight: "700", marginRight: "auto" },
   sectionTitle: { color: Colors.text, letterSpacing: -0.2, ...Typography.heading, fontWeight: "700", marginBottom: Spacing.md, marginTop: Spacing.xxl },
   overview: { color: Colors.textSecondary, ...Typography.body },
+  activitiesLoading: { marginTop: Spacing.md },
   stickyAction: { backgroundColor: Colors.background, borderTopColor: Colors.hairline, borderTopWidth: 1, bottom: 0, left: 0, paddingBottom: Spacing.lg, paddingHorizontal: Spacing.xl, paddingTop: Spacing.lg, position: "absolute", right: 0 },
   loadingHero: { alignItems: "center", backgroundColor: Colors.surface, height: 300, justifyContent: "center" },
   skeletonBody: { padding: Spacing.xl },

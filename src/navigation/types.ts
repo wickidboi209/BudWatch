@@ -3,4 +3,5 @@ export type RootStackParamList = {
   MovieDetail: { movieId: string };
   ExperienceForm: { movieId: string; movieTitle: string };
   VibeResults: { vibeId: string };
+  CommunityFeed: undefined;
 };

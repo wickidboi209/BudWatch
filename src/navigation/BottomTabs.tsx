@@ -36,9 +36,13 @@ export default function BottomTabs() {
             bottom: TAB_BAR_BOTTOM_OFFSET,
             height: TAB_BAR_HEIGHT,
             left: 16,
+            paddingBottom: 0,
+            paddingTop: 0,
             position: "absolute",
             right: 16,
           },
+
+          tabBarItemStyle: { paddingVertical: 0 },
 
           tabBarBackground: () => <BlurView intensity={70} tint="dark" style={styles.tabBarBackground} />,
 

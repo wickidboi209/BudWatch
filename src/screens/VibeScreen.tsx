@@ -1,10 +1,12 @@
 import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { AmbientBackground } from "../components/AmbientBackground";
 import { VibeTile } from "../components/VibeTile";
 import { Vibe, VIBES } from "../config/vibes";
 import { useVibe } from "../hooks/useVibe";
+import { RootStackParamList } from "../navigation/types";
 import { TAB_BAR_CLEARANCE } from "../navigation/tabBarMetrics";
 import { Colors } from "../theme/colors";
 import { Spacing } from "../theme/spacing";
@@ -20,18 +22,19 @@ function chunk<T>(items: T[], size: number): T[][] {
 
 export default function VibeScreen() {
   const { setSelectedVibeId } = useVibe();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const insets = useSafeAreaInsets();
   const rows = chunk(VIBES, COLUMNS);
 
   const pickVibe = (vibe: Vibe) => {
     setSelectedVibeId(vibe.id);
-    navigation.navigate("Home" as never);
+    navigation.navigate("VibeResults", { vibeId: vibe.id });
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView edges={["bottom"]} style={styles.container}>
       <AmbientBackground />
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + Spacing.xxl }]} showsVerticalScrollIndicator={false}>
         <Text style={styles.eyebrow}>Tonight's Vibe</Text>
 
         <View style={styles.grid}>
@@ -48,8 +51,8 @@ export default function VibeScreen() {
 
 const styles = StyleSheet.create({
   container: { backgroundColor: Colors.background, flex: 1 },
-  content: { padding: Spacing.xl, paddingBottom: Spacing.xxxl + TAB_BAR_CLEARANCE },
-  eyebrow: { color: Colors.textSecondary, ...Typography.label, letterSpacing: 1, marginTop: Spacing.xxl, textTransform: "uppercase" },
+  content: { paddingBottom: Spacing.xxxl + TAB_BAR_CLEARANCE, paddingHorizontal: Spacing.xl },
+  eyebrow: { color: Colors.textSecondary, ...Typography.label, letterSpacing: 1, textTransform: "uppercase" },
   grid: { gap: Spacing.md, marginTop: Spacing.lg },
   row: { flexDirection: "row", gap: Spacing.md },
 });

@@ -10,6 +10,7 @@ import { useAuth } from "./src/hooks/useAuth";
 import { RootStackParamList } from "./src/navigation/types";
 import MovieDetailScreen from "./src/screens/MovieDetailScreen";
 import ExperienceFormScreen from "./src/screens/ExperienceFormScreen";
+import VibeResultsScreen from "./src/screens/VibeResultsScreen";
 import { AuthProvider } from "./src/providers/AuthProvider";
 import { VibeProvider } from "./src/providers/VibeProvider";
 import { Colors } from "./src/theme/colors";
@@ -56,6 +57,7 @@ function AppContent() {
         <Stack.Screen component={BottomTabs} name="MainTabs" />
         <Stack.Screen component={MovieDetailScreen} name="MovieDetail" />
         <Stack.Screen component={ExperienceFormScreen} name="ExperienceForm" />
+        <Stack.Screen component={VibeResultsScreen} name="VibeResults" />
       </Stack.Navigator>
     </NavigationContainer>
   );

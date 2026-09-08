@@ -157,6 +157,41 @@ export async function fetchMovieDetailsById(movieId: string): Promise<MovieDetai
   return mapTmdbMovieDetails(details);
 }
 
+export type WatchProvider = { id: number; name: string; logoUrl: string };
+export type WatchProviders = { stream: WatchProvider[]; rent: WatchProvider[]; buy: WatchProvider[]; link: string | null };
+
+type TmdbWatchProvider = { provider_id: number; provider_name: string; logo_path: string };
+type TmdbWatchProvidersRegion = { link?: string; flatrate?: TmdbWatchProvider[]; rent?: TmdbWatchProvider[]; buy?: TmdbWatchProvider[] };
+type TmdbWatchProvidersResponse = { results: Record<string, TmdbWatchProvidersRegion> };
+
+const EMPTY_WATCH_PROVIDERS: WatchProviders = { buy: [], link: null, rent: [], stream: [] };
+
+export async function fetchWatchProviders(movieId: string, region = "US"): Promise<WatchProviders> {
+  const apiKey = getApiKey();
+  const response = await fetch(`${TMDB_API_URL}/movie/${encodeURIComponent(movieId)}/watch/providers?api_key=${encodeURIComponent(apiKey)}`, {
+    headers: { Accept: "application/json" },
+  });
+
+  if (!response.ok) throw new Error(`TMDB request failed with status ${response.status}.`);
+
+  const payload = await response.json() as TmdbWatchProvidersResponse;
+  const regionData = payload.results?.[region];
+  if (!regionData) return EMPTY_WATCH_PROVIDERS;
+
+  const mapProvider = (provider: TmdbWatchProvider): WatchProvider => ({
+    id: provider.provider_id,
+    name: provider.provider_name,
+    logoUrl: `${TMDB_IMAGE_URL}/w92${provider.logo_path}`,
+  });
+
+  return {
+    buy: (regionData.buy ?? []).map(mapProvider),
+    link: regionData.link ?? null,
+    rent: (regionData.rent ?? []).map(mapProvider),
+    stream: (regionData.flatrate ?? []).map(mapProvider),
+  };
+}
+
 export async function fetchMoviesForVibe(genreIds: number[]): Promise<Movie[]> {
   const apiKey = getApiKey();
   const q = `?api_key=${encodeURIComponent(apiKey)}&language=en-US&page=1&sort_by=popularity.desc&vote_count.gte=100&with_genres=${genreIds.join("|")}`;

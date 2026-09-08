@@ -9,7 +9,8 @@ import { CastCarousel } from "../components/movie-detail/CastCarousel";
 import { HeroBackdrop } from "../components/movie-detail/HeroBackdrop";
 import { MovieMetadata } from "../components/movie-detail/MovieMetadata";
 import { ReviewButton } from "../components/movie-detail/ReviewButton";
-import { fetchMovieDetailsById, MovieDetails } from "../services/tmdb";
+import { WatchProviders } from "../components/movie-detail/WatchProviders";
+import { fetchMovieDetailsById, fetchWatchProviders, MovieDetails, WatchProviders as WatchProvidersData } from "../services/tmdb";
 import { activityFeed } from "../services/social";
 import { addToWatchlist, isInWatchlist, removeFromWatchlist } from "../services/watchlist";
 import { RootStackParamList } from "../navigation/types";
@@ -29,6 +30,7 @@ export default function MovieDetailScreen({ navigation, route }: MovieDetailScre
   const [retryCount, setRetryCount] = useState(0);
   const [isSaved, setIsSaved] = useState(false);
   const [isTogglingSave, setIsTogglingSave] = useState(false);
+  const [watchProviders, setWatchProviders] = useState<WatchProvidersData | null>(null);
   const scrollY = useRef(new Animated.Value(0)).current;
   const reducedMotion = useReducedMotion();
 
@@ -57,6 +59,15 @@ export default function MovieDetailScreen({ navigation, route }: MovieDetailScre
     let isCurrentRequest = true;
     isInWatchlist(route.params.movieId)
       .then((saved) => { if (isCurrentRequest) setIsSaved(saved); })
+      .catch(() => {});
+    return () => { isCurrentRequest = false; };
+  }, [route.params.movieId]);
+
+  useEffect(() => {
+    let isCurrentRequest = true;
+    setWatchProviders(null);
+    fetchWatchProviders(route.params.movieId)
+      .then((result) => { if (isCurrentRequest) setWatchProviders(result); })
       .catch(() => {});
     return () => { isCurrentRequest = false; };
   }, [route.params.movieId]);
@@ -110,6 +121,13 @@ export default function MovieDetailScreen({ navigation, route }: MovieDetailScre
           </View>
 
           <BudScoreCard score={null} totalExperiences={0} />
+
+          {watchProviders && (watchProviders.stream.length || watchProviders.rent.length || watchProviders.buy.length) ? (
+            <>
+              <Text style={styles.sectionTitle}>Where to Watch</Text>
+              <WatchProviders providers={watchProviders} />
+            </>
+          ) : null}
 
           <Text style={styles.sectionTitle}>Overview</Text>
           <Text style={styles.overview}>{movie.overview}</Text>

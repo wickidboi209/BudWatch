@@ -8,6 +8,8 @@ import { HeroMovieBanner, HeroMovieFallback } from "../components/HeroMovieBanne
 import { Mood, MoodSelector } from "../components/MoodSelector";
 import { MovieFeedSkeleton } from "../components/MovieFeedSkeleton";
 import { MovieRow } from "../components/MovieRow";
+import { SectionHeader } from "../components/SectionHeader";
+import { useReducedMotion } from "../hooks/useReducedMotion";
 import { RootStackParamList } from "../navigation/types";
 import { fetchHomeMovies, TmdbHomeMovies } from "../services/tmdb";
 import { Colors } from "../theme/colors";
@@ -37,6 +39,7 @@ export default function HomeScreen() {
   const [retryCount, setRetryCount] = useState(0);
   const requestId = useRef(0);
   const contentOpacity = useRef(new Animated.Value(0)).current;
+  const reducedMotion = useReducedMotion();
   const openMovie = useCallback((movie: MovieId) => navigation.navigate("MovieDetail", { movieId: movie.id }), [navigation]);
 
   const loadMovies = useCallback(async (refresh = false) => {
@@ -62,10 +65,14 @@ export default function HomeScreen() {
 
   useEffect(() => {
     if (movies && !isLoading) {
+      if (reducedMotion) {
+        contentOpacity.setValue(1);
+        return;
+      }
       contentOpacity.setValue(0);
       Animated.timing(contentOpacity, { duration: 450, toValue: 1, useNativeDriver: true }).start();
     }
-  }, [contentOpacity, isLoading, movies]);
+  }, [contentOpacity, isLoading, movies, reducedMotion]);
 
   const heroMovie = movies?.trending.length ? movies.trending[moodRecommendations[selectedMood] % movies.trending.length] ?? movies.trending[0] : null;
 
@@ -93,7 +100,7 @@ export default function HomeScreen() {
 
 function HomeRow({ title, movies, onMoviePress }: HomeRowProps) {
   if (!movies.length) return null;
-  return <View style={styles.row}><Text style={styles.rowTitle}>{title}</Text><MovieRow movies={movies} onMoviePress={onMoviePress} /></View>;
+  return <View style={styles.row}><SectionHeader title={title} /><MovieRow movies={movies} onMoviePress={onMoviePress} /></View>;
 }
 
 const styles = StyleSheet.create({
@@ -101,14 +108,13 @@ const styles = StyleSheet.create({
   content: { paddingBottom: Spacing.xxxl, paddingHorizontal: Spacing.xl, paddingTop: Spacing.lg },
   header: { alignItems: "center", flexDirection: "row", justifyContent: "space-between" },
   wordmark: { color: Colors.text, ...Typography.heading },
-  profileButton: { alignItems: "center", height: 36, justifyContent: "center", width: 36 },
+  profileButton: { alignItems: "center", height: 44, justifyContent: "center", width: 44 },
   pressed: { opacity: 0.7 },
-  hero: { marginHorizontal: -Spacing.xl, marginTop: Spacing.sm },
-  question: { marginTop: Spacing.xxl },
+  hero: { marginHorizontal: -Spacing.xl, marginTop: Spacing.lg },
+  question: { marginTop: Spacing.xxxl },
   questionText: { color: Colors.text, ...Typography.title, marginBottom: Spacing.lg },
-  rows: { marginTop: Spacing.xxl },
+  rows: { marginTop: Spacing.xxxl },
   row: { marginTop: Spacing.xxxl },
-  rowTitle: { color: Colors.text, ...Typography.title, marginBottom: Spacing.lg },
   errorState: { backgroundColor: Colors.surface, borderRadius: Radius.lg, marginTop: Spacing.xxl, padding: Spacing.xl },
   errorTitle: { color: Colors.text, ...Typography.title },
   errorText: { color: Colors.textSecondary, ...Typography.body, marginTop: Spacing.sm },

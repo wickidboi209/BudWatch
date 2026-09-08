@@ -73,6 +73,6 @@ export default function BottomTabs() {
 }
 
 const styles = StyleSheet.create({
-  tabBarBackgroundClip: { bottom: 0, left: 0, position: "absolute", right: 0, top: 0, borderColor: Colors.hairlineStrong, borderRadius: Radius.lg, borderWidth: 1, overflow: "hidden", ...Shadows.card },
+  tabBarBackgroundClip: { bottom: 0, left: 0, position: "absolute", right: 0, top: 0, borderColor: Colors.hairlineStrong, borderRadius: Radius.pill, borderWidth: 1, overflow: "hidden", ...Shadows.card },
   tabBarBackgroundBlur: { backgroundColor: Colors.overlay, flex: 1 },
 });

@@ -1,7 +1,7 @@
 import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
-import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Pressable, StyleSheet } from "react-native";
+import { VibeFace } from "../components/VibeFace";
 import { Colors } from "../theme/colors";
 import { Shadows } from "../theme/shadows";
 
@@ -11,7 +11,7 @@ export function VibeTabButton({ accessibilityState, onPress, testID }: BottomTab
   return (
     <Pressable accessibilityRole="button" accessibilityState={accessibilityState} onPress={onPress} style={styles.wrapper} testID={testID}>
       <LinearGradient colors={["#A05EE0", "#3FC2B8", "#F0875A"]} end={{ x: 1, y: 1 }} start={{ x: 0, y: 0 }} style={[styles.orb, focused && styles.orbFocused]}>
-        <Ionicons color={Colors.text} name="sparkles" size={24} />
+        <VibeFace color={Colors.text} size={28} vibeId="questioning" />
       </LinearGradient>
     </Pressable>
   );

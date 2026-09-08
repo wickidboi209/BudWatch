@@ -42,7 +42,7 @@ export function HeroMovieBanner({ movie, onDetailsPress, onPress }: HeroMovieBan
       {!imageFailed ? <Animated.Image onError={() => { setImageFailed(true); reveal(); if (__DEV__) console.warn(`[HeroMovieBanner] Unable to load artwork for ${movie.title}.`); }} onLoad={reveal} resizeMode="cover" source={{ uri: movie.backdropImage ?? movie.image }} style={[styles.image, { opacity }]} /> : <View style={styles.fallbackArtwork}><Text style={styles.fallbackTitle}>{movie.title}</Text></View>}
       <LinearGradient colors={[Colors.overlayTransparent, `${Colors.background}B3`, Colors.background]} locations={[0.1, 0.62, 1]} style={styles.gradient} />
       <Animated.View style={[styles.content, { opacity, transform: [{ translateY: offset }] }]}>
-        <View style={styles.scorePill}><Text style={styles.leaf}>🍃</Text><Text style={styles.score}>{movie.budScore ?? movie.rating}</Text></View>
+        <View style={styles.scorePill}><Ionicons color={Colors.primary} name="leaf" size={14} /><Text style={styles.score}>{movie.budScore ?? movie.rating}</Text></View>
         <Text numberOfLines={1} style={styles.title}>{movie.title}</Text>
         <Text numberOfLines={2} style={styles.tagline}>{movie.overview || "Fear is the mind killer."}</Text>
         <View style={styles.buttonRow}>
@@ -75,7 +75,6 @@ const styles = StyleSheet.create({
   tagline: { color: Colors.textSecondary, ...Typography.body, marginTop: Spacing.xs, maxWidth: "92%" },
   scorePill: { alignItems: "center", alignSelf: "flex-start", backgroundColor: Colors.overlay, borderColor: Colors.hairline, borderRadius: Radius.pill, borderWidth: 1, flexDirection: "row", gap: 4, paddingHorizontal: Spacing.md, paddingVertical: 6 },
   score: { color: Colors.gold, ...Typography.label },
-  leaf: { fontSize: 14 },
   buttonRow: { alignItems: "center", flexDirection: "row", gap: Spacing.sm, marginTop: Spacing.lg },
   watchButton: { alignItems: "center", backgroundColor: Colors.text, borderRadius: Radius.pill, flexDirection: "row", gap: Spacing.xs, minHeight: 46, paddingHorizontal: Spacing.lg, ...Shadows.card },
   watchText: { color: Colors.background, ...Typography.label },

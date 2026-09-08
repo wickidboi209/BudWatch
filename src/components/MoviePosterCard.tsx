@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import { memo } from "react";
 import { useRef, useState } from "react";
 import { Animated, Image, Pressable, StyleSheet, Text, View } from "react-native";
@@ -36,7 +37,7 @@ export const MoviePosterCard = memo(function MoviePosterCard({ movie, onPress }:
         {imageFailed ? <View style={styles.imageFallback}><Text numberOfLines={3} style={styles.fallbackTitle}>{movie.title}</Text></View> : <Animated.Image onError={() => { setImageFailed(true); setImageLoaded(false); if (__DEV__) console.warn(`[MoviePosterCard] Unable to load artwork for ${movie.title}.`); }} onLoad={handleImageLoad} source={{ uri: movie.image }} style={[styles.image, { opacity: imageOpacity }]} />}
       <View style={styles.info}>
         <Text numberOfLines={1} style={styles.title}>{movie.title}</Text>
-        <View style={styles.meta}><Text style={styles.leaf}>🍃</Text><Text style={styles.rating}>{movie.budScore ?? movie.rating}</Text></View>
+        <View style={styles.meta}><Ionicons color={Colors.gold} name="leaf" size={11} /><Text style={styles.rating}>{movie.budScore ?? movie.rating}</Text></View>
       </View>
       </Pressable>
     </Animated.View>
@@ -53,6 +54,5 @@ const styles = StyleSheet.create({
   info: { paddingTop: Spacing.sm },
   title: { color: Colors.text, ...Typography.body, fontWeight: "700", letterSpacing: -0.1 },
   meta: { alignItems: "center", flexDirection: "row", gap: 4, paddingTop: 3 },
-  leaf: { fontSize: 11 },
   rating: { color: Colors.gold, ...Typography.label, fontWeight: "600" },
 });

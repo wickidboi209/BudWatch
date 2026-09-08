@@ -3,6 +3,7 @@ import { useRef } from "react";
 import { Animated, Pressable, StyleSheet, Text } from "react-native";
 import { Vibe } from "../config/vibes";
 import { useReducedMotion } from "../hooks/useReducedMotion";
+import { VibeFace } from "./VibeFace";
 import { Radius } from "../theme/radius";
 import { Shadows } from "../theme/shadows";
 import { Spacing } from "../theme/spacing";
@@ -29,7 +30,7 @@ export function VibeTile({ vibe, onPress }: VibeTileProps) {
         style={styles.pressable}
       >
         <LinearGradient colors={[vibe.colorFrom, vibe.colorTo]} end={{ x: 1, y: 1 }} start={{ x: 0, y: 0 }} style={styles.gradient}>
-          <Text style={styles.icon}>{vibe.icon}</Text>
+          <VibeFace size={34} vibeId={vibe.id} />
           <Text style={styles.label}>{vibe.label}</Text>
         </LinearGradient>
       </Pressable>
@@ -41,6 +42,5 @@ const styles = StyleSheet.create({
   container: { borderRadius: Radius.lg, flex: 1, overflow: "hidden" },
   pressable: { flex: 1 },
   gradient: { flex: 1, justifyContent: "flex-end", minHeight: 128, padding: Spacing.lg },
-  icon: { fontSize: 26, marginBottom: Spacing.sm },
-  label: { color: "#FFFFFF", ...Typography.heading, fontWeight: "700" },
+  label: { color: "#FFFFFF", marginTop: Spacing.sm, ...Typography.heading, fontWeight: "700" },
 });

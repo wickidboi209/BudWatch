@@ -1,6 +1,6 @@
-export type ReactionType = "😂" | "🤯" | "🔥" | "😭" | "❤️";
+export type ReactionType = "laugh" | "mind-blown" | "fire" | "cry" | "love";
 
-export const reactionTypes: ReactionType[] = ["😂", "🤯", "🔥", "😭", "❤️"];
+export const reactionTypes: ReactionType[] = ["laugh", "mind-blown", "fire", "cry", "love"];
 
 export type SocialComment = {
   id: string;
@@ -48,7 +48,7 @@ export const activityFeed: ActivityItem[] = [
     budScore: 9,
     experience: "Quiet, enormous, and somehow warmer every time I watch it.",
     timestamp: "12 min ago",
-    reactions: { "😂": 0, "🤯": 12, "🔥": 8, "😭": 4, "❤️": 15 },
+    reactions: { laugh: 0, "mind-blown": 12, fire: 8, cry: 4, love: 15 },
     comments: [
       { id: "arrival-comment-1", username: "jordanframes", avatar: avatar(12), text: "The sound design is unreal." },
       { id: "arrival-comment-2", username: "samafterdark", avatar: avatar(32), text: "Absolutely. That final act stays with you.", replyTo: "arrival-comment-1" },
@@ -63,7 +63,7 @@ export const activityFeed: ActivityItem[] = [
     budScore: 8,
     experience: "Pure color, perfect momentum. This is still the best kind of rewatch.",
     timestamp: "1 hr ago",
-    reactions: { "😂": 9, "🤯": 8, "🔥": 21, "😭": 2, "❤️": 18 },
+    reactions: { laugh: 9, "mind-blown": 8, fire: 21, cry: 2, love: 18 },
     comments: [{ id: "spider-comment-1", username: "maya.makesmovies", avatar: avatar(47), text: "The leap of faith scene gets me every time." }],
   },
 ];

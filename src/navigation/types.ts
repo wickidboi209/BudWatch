@@ -18,4 +18,5 @@ export type RootStackParamList = {
   CommunityFeed: undefined;
   Watchlist: undefined;
   CrewDetail: { crewId: string; crewName: string };
+  CrewChat: { crewId: string; crewName: string };
 };

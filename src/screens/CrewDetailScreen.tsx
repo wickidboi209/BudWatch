@@ -78,9 +78,14 @@ export default function CrewDetailScreen({ navigation, route }: CrewDetailScreen
           <Ionicons color={Colors.text} name="arrow-back" size={22} />
         </Pressable>
         <Text numberOfLines={1} style={styles.title}>{crewName}</Text>
-        <Pressable accessibilityLabel="Leave crew" accessibilityRole="button" hitSlop={Spacing.sm} onPress={confirmLeave} style={styles.iconButton}>
-          <Ionicons color={Colors.danger} name="exit-outline" size={20} />
-        </Pressable>
+        <View style={styles.headerActions}>
+          <Pressable accessibilityLabel="Open crew chat" accessibilityRole="button" hitSlop={Spacing.sm} onPress={() => navigation.navigate("CrewChat", { crewId, crewName })} style={styles.iconButton}>
+            <Ionicons color={Colors.text} name="chatbubble-outline" size={18} />
+          </Pressable>
+          <Pressable accessibilityLabel="Leave crew" accessibilityRole="button" hitSlop={Spacing.sm} onPress={confirmLeave} style={styles.iconButton}>
+            <Ionicons color={Colors.danger} name="exit-outline" size={20} />
+          </Pressable>
+        </View>
       </View>
 
       {isLoading ? (
@@ -129,6 +134,7 @@ export default function CrewDetailScreen({ navigation, route }: CrewDetailScreen
 const styles = StyleSheet.create({
   container: { backgroundColor: Colors.background, flex: 1 },
   header: { alignItems: "center", flexDirection: "row", gap: Spacing.md, paddingHorizontal: Spacing.xl, paddingTop: Spacing.lg },
+  headerActions: { flexDirection: "row", gap: Spacing.sm },
   iconButton: { alignItems: "center", backgroundColor: Colors.surface, borderColor: Colors.hairline, borderRadius: Radius.pill, borderWidth: 1, height: 40, justifyContent: "center", width: 40 },
   title: { color: Colors.text, ...Typography.heading, flex: 1, fontWeight: "700", textAlign: "center" },
   state: { alignItems: "center", flex: 1, justifyContent: "center", padding: Spacing.xl, paddingTop: Spacing.xxxl * 2 },

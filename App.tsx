@@ -1,77 +1,51 @@
-import { StatusBar } from "expo-status-bar";
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-} from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+
+import BottomTabs from "./src/navigation/BottomTabs";
+import AuthFlow from "./src/navigation/AuthFlow";
+import { useAuth } from "./src/hooks/useAuth";
+import { RootStackParamList } from "./src/navigation/types";
+import MovieDetailScreen from "./src/screens/MovieDetailScreen";
+import ExperienceFormScreen from "./src/screens/ExperienceFormScreen";
+import { AuthProvider } from "./src/providers/AuthProvider";
+import { Colors } from "./src/theme/colors";
+
+const DEV_BYPASS_AUTH = true;
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="light" />
+    <SafeAreaProvider>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </SafeAreaProvider>
+  );
+}
 
-      <View style={styles.content}>
-        <Text style={styles.logo}>🍿🌿</Text>
+function AppContent() {
+  const { isLoading, user } = useAuth();
 
-        <Text style={styles.title}>BudWatch</Text>
+  if (isLoading) {
+    return <View style={styles.loading}><ActivityIndicator color={Colors.primary} size="large" /></View>;
+  }
 
-        <Text style={styles.subtitle}>
-          Discover the best movies for elevated nights.
-        </Text>
+  if (!user && !DEV_BYPASS_AUTH) return <AuthFlow />;
 
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Get Started</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+  return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ animation: "slide_from_right", headerShown: false }}>
+        <Stack.Screen component={BottomTabs} name="MainTabs" />
+        <Stack.Screen component={MovieDetailScreen} name="MovieDetail" />
+        <Stack.Screen component={ExperienceFormScreen} name="ExperienceForm" />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#0D1117",
-  },
-
-  content: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 30,
-  },
-
-  logo: {
-    fontSize: 70,
-    marginBottom: 20,
-  },
-
-  title: {
-    color: "white",
-    fontSize: 42,
-    fontWeight: "800",
-    marginBottom: 10,
-  },
-
-  subtitle: {
-    color: "#9CA3AF",
-    textAlign: "center",
-    fontSize: 18,
-    lineHeight: 28,
-    marginBottom: 50,
-  },
-
-  button: {
-    backgroundColor: "#4ADE80",
-    paddingVertical: 18,
-    paddingHorizontal: 45,
-    borderRadius: 18,
-  },
-
-  buttonText: {
-    color: "#0D1117",
-    fontSize: 18,
-    fontWeight: "700",
-  },
+  loading: { alignItems: "center", backgroundColor: Colors.background, flex: 1, justifyContent: "center" },
 });

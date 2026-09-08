@@ -181,13 +181,7 @@ Working:
 
 Known Issues:
 
-• Visual hierarchy needs refinement.
-
-• Home screen still feels like a React Native application rather than a premium entertainment product.
-
-• Movie artwork should dominate more.
-
-• UI should contain less chrome.
+• None outstanding as of the last design review (2026-09-08). Home screen was rebuilt to match the desired layout below — hero dominates the first viewport, mood selector is a lightweight compact-chip row, poster cards have no boxy chrome, and typography has a clear hierarchy. Re-audit if a specific complaint comes up.
 
 ---
 
@@ -211,25 +205,10 @@ The application should never feel like a dashboard.
 
 # Current Home Screen Problems
 
-Current implementation has:
-
-Too many focal points.
-
-Hero competes with the header.
-
-Mood cards feel heavy.
-
-Too many visible containers.
-
-Movie artwork is not dominant enough.
-
-Typography hierarchy is weak.
-
-Spacing is inconsistent.
-
-Too much visible interface.
-
-The app still feels engineered instead of designed.
+Resolved as of 2026-09-08. The section below (Desired Home Layout) now
+matches the live implementation. Leaving this section as a record of
+what was fixed rather than deleting it — if a new problem surfaces,
+add it here rather than reviving the old list.
 
 ---
 

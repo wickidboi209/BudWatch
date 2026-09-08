@@ -157,6 +157,13 @@ export async function fetchMovieDetailsById(movieId: string): Promise<MovieDetai
   return mapTmdbMovieDetails(details);
 }
 
+export async function fetchSearchMovies(query: string): Promise<Movie[]> {
+  const apiKey = getApiKey();
+  const q = `?api_key=${encodeURIComponent(apiKey)}&language=en-US&page=1&include_adult=false&query=${encodeURIComponent(query)}`;
+  const response = await fetchMovies(`/search/movie${q}`);
+  return mapMovies(response);
+}
+
 export async function fetchHomeMovies(): Promise<TmdbHomeMovies> {
   const apiKey = getApiKey();
   const query = `?api_key=${encodeURIComponent(apiKey)}&language=en-US&page=1`;

@@ -11,6 +11,7 @@ import ProfileScreen from "../screens/ProfileScreen";
 import { Colors } from "../theme/colors";
 import { Radius } from "../theme/radius";
 import { Shadows } from "../theme/shadows";
+import { TAB_BAR_BOTTOM_OFFSET, TAB_BAR_HEIGHT } from "./tabBarMetrics";
 
 const Tab = createBottomTabNavigator();
 
@@ -23,8 +24,8 @@ export default function BottomTabs() {
           tabBarStyle: {
             backgroundColor: "transparent",
             borderTopWidth: 0,
-            bottom: 12,
-            height: 64,
+            bottom: TAB_BAR_BOTTOM_OFFSET,
+            height: TAB_BAR_HEIGHT,
             left: 16,
             position: "absolute",
             right: 16,

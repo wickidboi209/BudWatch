@@ -10,6 +10,7 @@ import { MovieFeedSkeleton } from "../components/MovieFeedSkeleton";
 import { MovieRow } from "../components/MovieRow";
 import { SectionHeader } from "../components/SectionHeader";
 import { useReducedMotion } from "../hooks/useReducedMotion";
+import { TAB_BAR_CLEARANCE } from "../navigation/tabBarMetrics";
 import { RootStackParamList } from "../navigation/types";
 import { fetchHomeMovies, TmdbHomeMovies } from "../services/tmdb";
 import { Colors } from "../theme/colors";
@@ -105,7 +106,7 @@ function HomeRow({ title, movies, onMoviePress }: HomeRowProps) {
 
 const styles = StyleSheet.create({
   container: { backgroundColor: Colors.background, flex: 1 },
-  content: { paddingBottom: Spacing.xxxl, paddingHorizontal: Spacing.xl, paddingTop: Spacing.lg },
+  content: { paddingBottom: Spacing.xxxl + TAB_BAR_CLEARANCE, paddingHorizontal: Spacing.xl, paddingTop: Spacing.lg },
   header: { alignItems: "center", flexDirection: "row", justifyContent: "space-between" },
   wordmark: { color: Colors.text, ...Typography.heading },
   profileButton: { alignItems: "center", height: 44, justifyContent: "center", width: 44 },

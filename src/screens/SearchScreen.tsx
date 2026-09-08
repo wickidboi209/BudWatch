@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { AmbientBackground } from "../components/AmbientBackground";
 import { Movie } from "../components/MoviePosterCard";
 import { MoviePosterGrid } from "../components/MoviePosterGrid";
 import { RootStackParamList } from "../navigation/types";
@@ -54,6 +55,7 @@ export default function SearchScreen() {
 
   return (
     <SafeAreaView edges={["top"]} style={styles.container}>
+      <AmbientBackground />
       <View style={styles.header}>
         <Text style={styles.title}>Search</Text>
         <View style={styles.searchBar}>
@@ -95,7 +97,7 @@ function SearchEmptyState({ error, hasQuery, isLoading }: { error: string | null
 const styles = StyleSheet.create({
   container: { backgroundColor: Colors.background, flex: 1 },
   header: { paddingHorizontal: Spacing.xl, paddingTop: Spacing.lg },
-  title: { color: Colors.text, letterSpacing: -0.4, ...Typography.display },
+  title: { color: Colors.textSecondary, ...Typography.label, letterSpacing: 1, textTransform: "uppercase" },
   searchBar: { alignItems: "center", backgroundColor: Colors.surfaceElevated, borderColor: Colors.hairlineStrong, borderRadius: Radius.pill, borderWidth: 1, flexDirection: "row", gap: Spacing.sm, marginTop: Spacing.lg, minHeight: 50, paddingHorizontal: Spacing.lg },
   input: { color: Colors.text, flex: 1, ...Typography.body, paddingVertical: Spacing.sm },
   emptyState: { alignItems: "center", flex: 1, justifyContent: "center", paddingTop: Spacing.xxxl * 2 },

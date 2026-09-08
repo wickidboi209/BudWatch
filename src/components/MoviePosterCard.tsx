@@ -10,9 +10,9 @@ import { Shadows } from "../theme/shadows";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 
 export type Movie = { id: string; title: string; year: string; rating: string; genre: string; image: string; backdropImage?: string; overview?: string; budScore?: number | null };
-type MoviePosterCardProps = { movie: Movie; onPress?: (movie: Movie) => void };
+type MoviePosterCardProps = { movie: Movie; onPress?: (movie: Movie) => void; width?: number };
 
-export const MoviePosterCard = memo(function MoviePosterCard({ movie, onPress }: MoviePosterCardProps) {
+export const MoviePosterCard = memo(function MoviePosterCard({ movie, onPress, width = 156 }: MoviePosterCardProps) {
   const scale = useRef(new Animated.Value(1)).current;
   const imageOpacity = useRef(new Animated.Value(0)).current;
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -31,7 +31,7 @@ export const MoviePosterCard = memo(function MoviePosterCard({ movie, onPress }:
   };
 
   return (
-    <Animated.View style={[styles.container, Shadows.card, isPressed && Shadows.cardPressed, { transform: [{ scale }] }]}>
+    <Animated.View style={[styles.container, { width }, Shadows.card, isPressed && Shadows.cardPressed, { transform: [{ scale }] }]}>
       {!imageLoaded && !imageFailed ? <View style={styles.placeholder} /> : null}
       <Pressable accessibilityLabel={`Open ${movie.title}`} accessibilityRole="button" onPress={() => onPress?.(movie)} onPressIn={() => { setIsPressed(true); animatePress(0.97); }} onPressOut={() => { setIsPressed(false); animatePress(1); }} style={styles.pressable}>
         {imageFailed ? <View style={styles.imageFallback}><Text numberOfLines={3} style={styles.fallbackTitle}>{movie.title}</Text></View> : <Animated.Image onError={() => { setImageFailed(true); setImageLoaded(false); if (__DEV__) console.warn(`[MoviePosterCard] Unable to load artwork for ${movie.title}.`); }} onLoad={handleImageLoad} source={{ uri: movie.image }} style={[styles.image, { opacity: imageOpacity }]} />}

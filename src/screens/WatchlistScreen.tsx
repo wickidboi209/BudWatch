@@ -4,6 +4,7 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useCallback, useRef, useState } from "react";
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { AmbientBackground } from "../components/AmbientBackground";
 import { Movie } from "../components/MoviePosterCard";
 import { MoviePosterGrid } from "../components/MoviePosterGrid";
 import { RootStackParamList } from "../navigation/types";
@@ -39,6 +40,7 @@ export default function WatchlistScreen() {
 
   return (
     <SafeAreaView edges={["top"]} style={styles.container}>
+      <AmbientBackground />
       <View style={styles.header}><Text style={styles.title}>Watchlist</Text></View>
       <MoviePosterGrid
         ListEmptyComponent={<WatchlistEmptyState error={error} isLoading={isLoading} onRetry={load} />}
@@ -66,7 +68,7 @@ function WatchlistEmptyState({ error, isLoading, onRetry }: { error: string | nu
 const styles = StyleSheet.create({
   container: { backgroundColor: Colors.background, flex: 1 },
   header: { paddingHorizontal: Spacing.xl, paddingTop: Spacing.lg },
-  title: { color: Colors.text, letterSpacing: -0.4, ...Typography.display },
+  title: { color: Colors.textSecondary, ...Typography.label, letterSpacing: 1, textTransform: "uppercase" },
   emptyState: { alignItems: "center", flex: 1, justifyContent: "center", paddingTop: Spacing.xxxl * 2 },
   mark: { alignItems: "center", backgroundColor: Colors.surface, borderColor: Colors.hairlineStrong, borderRadius: Radius.lg, borderWidth: 1, height: 64, justifyContent: "center", marginBottom: Spacing.xl, width: 64 },
   emptyTitle: { color: Colors.text, ...Typography.title, fontWeight: "700", textAlign: "center" },

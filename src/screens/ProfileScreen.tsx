@@ -1,7 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { AmbientBackground } from "../components/AmbientBackground";
 import { BudScoreCard } from "../components/BudScoreCard";
 import { CrewList } from "../components/social/CrewList";
 import { getVibe } from "../config/vibes";
@@ -38,10 +39,12 @@ export default function ProfileScreen() {
   }, [signOut]);
 
   const favoriteMood = stats?.favoriteMood ? getVibe(stats.favoriteMood)?.label ?? stats.favoriteMood : "Not enough data";
+  const insets = useSafeAreaInsets();
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+    <SafeAreaView edges={["bottom"]} style={styles.container}>
+      <AmbientBackground />
+      <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + Spacing.xxl }]} showsVerticalScrollIndicator={false}>
         <View style={styles.profileHeader}>
           <View style={styles.avatar}><Ionicons color={Colors.textSecondary} name="person" size={30} /></View>
           <View style={styles.identity}>
@@ -84,7 +87,7 @@ function Stat({ label, value }: { label: string; value: string }) {
 
 const styles = StyleSheet.create({
   container: { backgroundColor: Colors.background, flex: 1 },
-  content: { padding: Spacing.xl, paddingBottom: Spacing.xxxl + TAB_BAR_CLEARANCE, paddingTop: Spacing.xxxl },
+  content: { padding: Spacing.xl, paddingBottom: Spacing.xxxl + TAB_BAR_CLEARANCE },
   profileHeader: { alignItems: "center", flexDirection: "row", gap: Spacing.lg, marginBottom: Spacing.xxxl },
   avatar: { alignItems: "center", backgroundColor: Colors.surface, borderColor: Colors.primary, borderRadius: Radius.pill, borderWidth: 1.5, height: 88, justifyContent: "center", width: 88 },
   identity: { flex: 1 },

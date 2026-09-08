@@ -4,10 +4,15 @@ import { Movie, MoviePosterCard } from "./MoviePosterCard";
 import { TAB_BAR_CLEARANCE } from "../navigation/tabBarMetrics";
 import { Spacing } from "../theme/spacing";
 
-const CARD_WIDTH = 156;
+const MIN_CARD_WIDTH = 140;
 const GRID_GAP = Spacing.lg;
 const GRID_PADDING = Spacing.lg;
-const numColumns = Math.max(2, Math.floor((Dimensions.get("window").width - GRID_PADDING * 2 + GRID_GAP) / (CARD_WIDTH + GRID_GAP)));
+const screenWidth = Dimensions.get("window").width;
+const numColumns = Math.max(2, Math.floor((screenWidth - GRID_PADDING * 2 + GRID_GAP) / (MIN_CARD_WIDTH + GRID_GAP)));
+// Cards are sized to fill the row exactly, so there's never leftover space to
+// center or left-align around - rows are edge-to-edge with even gaps, and a
+// short list (e.g. one saved movie) still sits naturally at the start.
+const cardWidth = (screenWidth - GRID_PADDING * 2 - GRID_GAP * (numColumns - 1)) / numColumns;
 
 type MoviePosterGridProps = {
   movies: Movie[];
@@ -36,7 +41,7 @@ export function MoviePosterGrid({ ListEmptyComponent, ListFooterComponent, movie
       onRefresh={onRefresh}
       onScroll={onScroll}
       refreshing={refreshing}
-      renderItem={({ item }) => <View style={styles.cardSlot}><MoviePosterCard movie={item} onPress={onMoviePress} /></View>}
+      renderItem={({ item }) => <View style={styles.cardSlot}><MoviePosterCard movie={item} onPress={onMoviePress} width={cardWidth} /></View>}
       scrollEventThrottle={16}
       showsVerticalScrollIndicator={false}
     />
@@ -46,6 +51,6 @@ export function MoviePosterGrid({ ListEmptyComponent, ListFooterComponent, movie
 const styles = StyleSheet.create({
   content: { flexGrow: 1, paddingBottom: Spacing.xxxl + TAB_BAR_CLEARANCE, paddingHorizontal: GRID_PADDING, paddingTop: Spacing.xl },
   contentNoClearance: { paddingBottom: Spacing.xxxl },
-  row: { gap: GRID_GAP, justifyContent: "center" },
+  row: { gap: GRID_GAP },
   cardSlot: { marginBottom: Spacing.xl },
 });

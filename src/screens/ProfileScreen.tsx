@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useNavigation } from "@react-navigation/native";
-import { useCallback, useEffect, useState } from "react";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useCallback, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { AmbientBackground } from "../components/AmbientBackground";
@@ -25,7 +25,7 @@ export default function ProfileScreen() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSigningOut, setIsSigningOut] = useState(false);
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     let isCurrent = true;
     setIsLoading(true);
     setError(null);
@@ -34,7 +34,7 @@ export default function ProfileScreen() {
       .catch((requestError: unknown) => { if (isCurrent) setError(requestError instanceof Error ? requestError.message : "Unable to load your stats."); })
       .finally(() => { if (isCurrent) setIsLoading(false); });
     return () => { isCurrent = false; };
-  }, []);
+  }, []));
 
   const handleSignOut = useCallback(async () => {
     setIsSigningOut(true);

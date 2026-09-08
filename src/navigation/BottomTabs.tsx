@@ -56,7 +56,7 @@ export default function BottomTabs() {
         <Tab.Screen
           component={VibeScreen}
           name="Vibe"
-          options={{ tabBarButton: (props) => <VibeTabButton {...props} />, tabBarShowLabel: false }}
+          options={{ tabBarButton: (props) => <VibeTabButton {...props} /> }}
         />
         <Tab.Screen name="Watchlist" component={WatchlistScreen} />
         <Tab.Screen name="Profile" component={ProfileScreen} />

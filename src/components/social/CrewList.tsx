@@ -15,9 +15,9 @@ export function CrewList({ crew }: CrewListProps) {
 }
 
 const styles = StyleSheet.create({
-  container: { backgroundColor: Colors.surface, borderRadius: Radius.lg, padding: Spacing.lg },
+  container: { backgroundColor: Colors.surface, borderColor: Colors.hairline, borderRadius: Radius.lg, borderWidth: 1, padding: Spacing.lg },
   member: { alignItems: "center", flexDirection: "row", marginTop: Spacing.md },
-  avatar: { backgroundColor: Colors.surfaceElevated, borderRadius: Radius.pill, height: 44, width: 44 },
+  avatar: { backgroundColor: Colors.surfaceElevated, borderColor: Colors.hairline, borderRadius: Radius.pill, borderWidth: 1, height: 44, width: 44 },
   copy: { paddingLeft: Spacing.md },
   username: { color: Colors.text, ...Typography.body, fontWeight: "700" },
   status: { color: Colors.textSecondary, ...Typography.label, fontWeight: "400", marginTop: Spacing.xs },

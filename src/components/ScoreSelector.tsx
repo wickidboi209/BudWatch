@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Colors } from "../theme/colors";
 import { Radius } from "../theme/radius";
+import { Shadows } from "../theme/shadows";
 import { Spacing } from "../theme/spacing";
 import { Typography } from "../theme/typography";
 
@@ -20,8 +21,8 @@ export function ScoreSelector({ value, onChange }: ScoreSelectorProps) {
 
 const styles = StyleSheet.create({
   container: { flexDirection: "row", flexWrap: "wrap", gap: Spacing.sm },
-  score: { alignItems: "center", backgroundColor: Colors.surface, borderColor: Colors.border, borderRadius: Radius.md, borderWidth: 1, height: 44, justifyContent: "center", width: 44 },
-  selected: { backgroundColor: Colors.primary, borderColor: Colors.primary },
+  score: { alignItems: "center", backgroundColor: Colors.surface, borderColor: Colors.hairline, borderRadius: Radius.md, borderWidth: 1, height: 44, justifyContent: "center", width: 44 },
+  selected: { backgroundColor: Colors.primary, borderColor: Colors.primary, ...Shadows.card },
   label: { color: Colors.textSecondary, ...Typography.heading },
   selectedLabel: { color: Colors.background },
 });

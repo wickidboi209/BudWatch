@@ -36,8 +36,8 @@ export function CastCarousel({ cast }: CastCarouselProps) {
 const styles = StyleSheet.create({
   content: { paddingRight: Spacing.xl },
   card: { width: 88 },
-  image: { backgroundColor: Colors.surfaceElevated, borderRadius: Radius.md, height: 116, width: 88 },
-  imagePlaceholder: { backgroundColor: Colors.surfaceElevated, borderRadius: Radius.md, height: 116, width: 88 },
-  name: { color: Colors.text, ...Typography.label, marginTop: Spacing.sm },
+  image: { backgroundColor: Colors.surfaceElevated, borderColor: Colors.hairline, borderRadius: Radius.md, borderWidth: 1, height: 116, width: 88 },
+  imagePlaceholder: { backgroundColor: Colors.surfaceElevated, borderColor: Colors.hairline, borderRadius: Radius.md, borderWidth: 1, height: 116, width: 88 },
+  name: { color: Colors.text, ...Typography.label, marginTop: Spacing.sm, fontWeight: "700" },
   character: { color: Colors.textSecondary, ...Typography.label, fontWeight: "400", marginTop: Spacing.xs },
 });

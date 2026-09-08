@@ -3,6 +3,7 @@ import * as Haptics from "expo-haptics";
 import { Animated, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Colors } from "../theme/colors";
 import { Radius } from "../theme/radius";
+import { Shadows } from "../theme/shadows";
 import { Spacing } from "../theme/spacing";
 import { Typography } from "../theme/typography";
 import { useReducedMotion } from "../hooks/useReducedMotion";
@@ -56,9 +57,9 @@ function MoodChip({ compact, isSelected, mood, onPress }: { compact: boolean; is
 
 const styles = StyleSheet.create({
   content: { gap: Spacing.sm, paddingRight: Spacing.xl },
-  item: { backgroundColor: Colors.surface, borderRadius: Radius.lg, flexDirection: "row", gap: Spacing.sm, minHeight: 76, paddingHorizontal: Spacing.md, paddingVertical: Spacing.md, width: 148 },
+  item: { backgroundColor: Colors.surface, borderColor: Colors.hairline, borderRadius: Radius.lg, borderWidth: 1, flexDirection: "row", gap: Spacing.sm, minHeight: 76, paddingHorizontal: Spacing.md, paddingVertical: Spacing.md, width: 148 },
   compactItem: { justifyContent: "center", minHeight: 44, paddingHorizontal: Spacing.lg, paddingVertical: Spacing.sm, width: "auto" },
-  selected: { backgroundColor: Colors.primary, borderColor: Colors.primary },
+  selected: { backgroundColor: Colors.primary, borderColor: Colors.primary, ...Shadows.card },
   icon: { fontSize: 22 },
   label: { color: Colors.textSecondary, ...Typography.body, fontWeight: "600", flexShrink: 1 },
   compactLabel: { ...Typography.body, fontWeight: "500" },

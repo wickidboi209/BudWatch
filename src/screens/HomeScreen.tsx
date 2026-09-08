@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Animated, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { HeroMovieBanner, HeroMovieFallback } from "../components/HeroMovieBanner";
+import { Logo } from "../components/Logo";
 import { Mood, MoodSelector } from "../components/MoodSelector";
 import { MovieFeedSkeleton } from "../components/MovieFeedSkeleton";
 import { MovieRow } from "../components/MovieRow";
@@ -80,7 +81,7 @@ export default function HomeScreen() {
   return <SafeAreaView edges={["top"]} style={styles.container}>
     <ScrollView contentContainerStyle={styles.content} refreshControl={<RefreshControl colors={[Colors.primary]} onRefresh={() => void loadMovies(true)} refreshing={isRefreshing} tintColor={Colors.primary} />} showsVerticalScrollIndicator={false}>
       <View style={styles.header}>
-        <Text style={styles.wordmark}>BudWatch</Text>
+        <Logo showWordmark />
         <Pressable accessibilityLabel="Open profile" accessibilityRole="button" hitSlop={Spacing.sm} onPress={() => navigation.navigate("MainTabs")} style={({ pressed }) => [styles.profileButton, pressed && styles.pressed]}>
           <Ionicons color={Colors.text} name="person-outline" size={19} />
         </Pressable>
@@ -108,12 +109,11 @@ const styles = StyleSheet.create({
   container: { backgroundColor: Colors.background, flex: 1 },
   content: { paddingBottom: Spacing.xxxl + TAB_BAR_CLEARANCE, paddingHorizontal: Spacing.xl, paddingTop: Spacing.lg },
   header: { alignItems: "center", flexDirection: "row", justifyContent: "space-between" },
-  wordmark: { color: Colors.text, ...Typography.heading },
-  profileButton: { alignItems: "center", height: 44, justifyContent: "center", width: 44 },
+  profileButton: { alignItems: "center", backgroundColor: Colors.surface, borderColor: Colors.hairline, borderRadius: Radius.pill, borderWidth: 1, height: 40, justifyContent: "center", width: 40 },
   pressed: { opacity: 0.7 },
   hero: { marginHorizontal: -Spacing.xl, marginTop: Spacing.lg },
-  question: { marginTop: Spacing.xxxl },
-  questionText: { color: Colors.text, ...Typography.title, marginBottom: Spacing.lg },
+  question: { marginTop: Spacing.xxl },
+  questionText: { color: Colors.text, letterSpacing: -0.3, ...Typography.title, fontWeight: "700", marginBottom: Spacing.lg },
   rows: { marginTop: Spacing.xxxl },
   row: { marginTop: Spacing.xxxl },
   errorState: { backgroundColor: Colors.surface, borderRadius: Radius.lg, marginTop: Spacing.xxl, padding: Spacing.xl },

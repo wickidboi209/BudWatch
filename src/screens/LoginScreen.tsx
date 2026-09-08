@@ -1,6 +1,8 @@
+import { Ionicons } from "@expo/vector-icons";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
+import { AmbientBackground } from "../components/AmbientBackground";
 import { AuthButton } from "../components/auth/AuthButton";
 import { AuthField } from "../components/auth/AuthField";
 import { useAuth } from "../hooks/useAuth";
@@ -41,8 +43,9 @@ export default function LoginScreen({ onBack, onSignUp }: LoginScreenProps) {
   };
 
   return <SafeAreaView style={styles.container}>
+    <AmbientBackground />
     <View style={styles.content}>
-      <Pressable accessibilityRole="button" onPress={onBack}><Text style={styles.back}>Back</Text></Pressable>
+      <Pressable accessibilityRole="button" hitSlop={Spacing.sm} onPress={onBack} style={styles.backButton}><Ionicons color={Colors.text} name="chevron-back" size={16} /><Text style={styles.back}>Back</Text></Pressable>
       <Text style={styles.eyebrow}>WELCOME BACK</Text>
       <Text style={styles.title}>Log in to BudWatch.</Text>
       <Text style={styles.description}>Your moods, watchlist, and movie identity are waiting.</Text>
@@ -65,8 +68,9 @@ export default function LoginScreen({ onBack, onSignUp }: LoginScreenProps) {
 const styles = StyleSheet.create({
   container: { backgroundColor: Colors.background, flex: 1 },
   content: { padding: Spacing.xl, paddingTop: Spacing.lg },
-  back: { color: Colors.primary, ...Typography.body, fontWeight: "700" },
-  eyebrow: { color: Colors.primary, ...Typography.label, letterSpacing: 1, marginTop: Spacing.xxxl },
+  backButton: { alignItems: "center", alignSelf: "flex-start", flexDirection: "row" },
+  back: { color: Colors.text, ...Typography.body, fontWeight: "600" },
+  eyebrow: { color: Colors.primary, ...Typography.label, letterSpacing: 1.4, marginTop: Spacing.xxxl },
   title: { color: Colors.text, ...Typography.display, marginTop: Spacing.md },
   description: { color: Colors.textSecondary, ...Typography.body, marginTop: Spacing.lg },
   error: { color: Colors.danger, ...Typography.body, marginTop: Spacing.lg },

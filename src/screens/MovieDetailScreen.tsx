@@ -14,6 +14,7 @@ import { activityFeed } from "../services/social";
 import { RootStackParamList } from "../navigation/types";
 import { Colors } from "../theme/colors";
 import { Radius } from "../theme/radius";
+import { Shadows } from "../theme/shadows";
 import { Spacing } from "../theme/spacing";
 import { Typography } from "../theme/typography";
 import { useReducedMotion } from "../hooks/useReducedMotion";
@@ -139,18 +140,18 @@ const styles = StyleSheet.create({
   container: { backgroundColor: Colors.background, flex: 1 },
   content: { paddingBottom: Spacing.xxxl + Spacing.xxxl },
   hero: { position: "relative" },
-  backButton: { alignItems: "center", backgroundColor: Colors.overlay, borderRadius: Radius.pill, height: 44, justifyContent: "center", left: Spacing.lg, position: "absolute", top: Spacing.lg, width: 44 },
+  backButton: { alignItems: "center", backgroundColor: Colors.overlay, borderColor: Colors.hairlineStrong, borderRadius: Radius.pill, borderWidth: 1, height: 44, justifyContent: "center", left: Spacing.lg, position: "absolute", top: Spacing.lg, width: 44 },
   detailBody: { paddingHorizontal: Spacing.xl },
   titleRow: { flexDirection: "row", marginTop: -Spacing.xxxl },
-  poster: { borderRadius: Radius.md, height: 168, width: 112 },
+  poster: { borderColor: Colors.hairlineStrong, borderRadius: Radius.md, borderWidth: 1, height: 168, width: 112, ...Shadows.card },
   titleContent: { flex: 1, justifyContent: "flex-end", paddingLeft: Spacing.lg, paddingBottom: Spacing.sm },
-  title: { color: Colors.text, ...Typography.title, marginBottom: Spacing.sm },
+  title: { color: Colors.text, letterSpacing: -0.3, ...Typography.title, marginBottom: Spacing.sm },
   scoreRow: { alignItems: "center", flexDirection: "row", gap: Spacing.sm, marginTop: Spacing.xl },
   ratingLabel: { color: Colors.textSecondary, ...Typography.label },
   ratingValue: { color: Colors.gold, ...Typography.body, fontWeight: "700", marginRight: "auto" },
-  sectionTitle: { color: Colors.text, ...Typography.heading, marginBottom: Spacing.md, marginTop: Spacing.xxl },
+  sectionTitle: { color: Colors.text, letterSpacing: -0.2, ...Typography.heading, fontWeight: "700", marginBottom: Spacing.md, marginTop: Spacing.xxl },
   overview: { color: Colors.textSecondary, ...Typography.body },
-  stickyAction: { backgroundColor: Colors.background, bottom: 0, left: 0, paddingBottom: Spacing.lg, paddingHorizontal: Spacing.xl, paddingTop: Spacing.sm, position: "absolute", right: 0 },
+  stickyAction: { backgroundColor: Colors.background, borderTopColor: Colors.hairline, borderTopWidth: 1, bottom: 0, left: 0, paddingBottom: Spacing.lg, paddingHorizontal: Spacing.xl, paddingTop: Spacing.lg, position: "absolute", right: 0 },
   loadingHero: { alignItems: "center", backgroundColor: Colors.surface, height: 300, justifyContent: "center" },
   skeletonBody: { padding: Spacing.xl },
   skeletonTitle: { backgroundColor: Colors.surfaceElevated, borderRadius: Radius.sm, height: 30, width: "72%" },
@@ -161,7 +162,7 @@ const styles = StyleSheet.create({
   errorState: { alignItems: "center", flex: 1, justifyContent: "center", padding: Spacing.xl },
   errorTitle: { color: Colors.text, ...Typography.heading, marginTop: Spacing.lg, textAlign: "center" },
   errorText: { color: Colors.textSecondary, ...Typography.body, marginTop: Spacing.sm, textAlign: "center" },
-  retryButton: { backgroundColor: Colors.primary, borderRadius: Radius.pill, marginTop: Spacing.xl, minHeight: 52, justifyContent: "center", paddingHorizontal: Spacing.xl },
+  retryButton: { backgroundColor: Colors.primary, borderRadius: Radius.pill, marginTop: Spacing.xl, minHeight: 52, justifyContent: "center", paddingHorizontal: Spacing.xl, ...Shadows.hero },
   retryText: { color: Colors.background, ...Typography.heading },
   backLink: { marginTop: Spacing.lg, minHeight: 44, justifyContent: "center", paddingHorizontal: Spacing.lg },
   backLinkText: { color: Colors.primary, ...Typography.body, fontWeight: "700" },

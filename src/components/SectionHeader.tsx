@@ -21,7 +21,7 @@ export function SectionHeader({ title, actionLabel, onActionPress }: SectionHead
 
 const styles = StyleSheet.create({
   container: { alignItems: "center", flexDirection: "row", justifyContent: "space-between", marginBottom: Spacing.md },
-  title: { color: Colors.text, ...Typography.title },
+  title: { color: Colors.text, letterSpacing: -0.3, ...Typography.title, fontWeight: "700" },
   action: { borderRadius: Radius.pill, paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xs },
   actionText: { color: Colors.primary, ...Typography.label },
 });

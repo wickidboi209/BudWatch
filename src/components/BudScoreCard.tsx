@@ -31,9 +31,9 @@ export function BudScoreCard({ score, totalExperiences }: BudScoreCardProps) {
 }
 
 const styles = StyleSheet.create({
-  container: { backgroundColor: Colors.surface, borderRadius: Radius.lg, padding: Spacing.lg },
+  container: { backgroundColor: Colors.surface, borderColor: Colors.hairline, borderRadius: Radius.lg, borderWidth: 1, padding: Spacing.lg },
   header: { alignItems: "center", flexDirection: "row", justifyContent: "space-between" },
-  eyebrow: { color: Colors.primary, ...Typography.label, letterSpacing: 1 },
+  eyebrow: { color: Colors.primary, ...Typography.label, letterSpacing: 1.2 },
   total: { color: Colors.textSecondary, ...Typography.label, fontWeight: "400" },
   scoreRow: { alignItems: "baseline", flexDirection: "row", marginTop: Spacing.lg },
   score: { color: Colors.text, fontSize: 38, fontWeight: "800" },

@@ -16,4 +16,9 @@ export const Colors = {
   gold: "#FBBF24",
 
   danger: "#EF4444",
+
+  hairline: "#FFFFFF14",
+  hairlineStrong: "#FFFFFF22",
+  primaryGlow: "#4ADE8040",
+  secondaryGlow: "#A855F733",
 };

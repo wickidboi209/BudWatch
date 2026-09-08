@@ -21,6 +21,6 @@ export default function ReviewsScreen() {
 const styles = StyleSheet.create({
   container: { backgroundColor: Colors.background, flex: 1 },
   header: { paddingHorizontal: Spacing.xl, paddingTop: Spacing.lg },
-  eyebrow: { color: Colors.primary, ...Typography.label, letterSpacing: 1 },
+  eyebrow: { color: Colors.primary, ...Typography.label, letterSpacing: 1.2 },
   title: { color: Colors.text, ...Typography.display, marginTop: Spacing.xs },
 });

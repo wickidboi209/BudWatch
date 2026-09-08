@@ -15,6 +15,14 @@ import { TAB_BAR_BOTTOM_OFFSET, TAB_BAR_HEIGHT } from "./tabBarMetrics";
 
 const Tab = createBottomTabNavigator();
 
+const icons: Record<string, { active: keyof typeof Ionicons.glyphMap; inactive: keyof typeof Ionicons.glyphMap }> = {
+  Home: { active: "home", inactive: "home-outline" },
+  Search: { active: "search", inactive: "search-outline" },
+  Reviews: { active: "star", inactive: "star-outline" },
+  Watchlist: { active: "heart", inactive: "heart-outline" },
+  Profile: { active: "person", inactive: "person-outline" },
+};
+
 export default function BottomTabs() {
   return (
     <Tab.Navigator
@@ -36,28 +44,9 @@ export default function BottomTabs() {
           tabBarActiveTintColor: Colors.primary,
           tabBarInactiveTintColor: Colors.textSecondary,
 
-          tabBarIcon: ({ color, size }) => {
-            let iconName: keyof typeof Ionicons.glyphMap = "home";
-
-            switch (route.name) {
-              case "Home":
-                iconName = "home";
-                break;
-              case "Search":
-                iconName = "search";
-                break;
-              case "Reviews":
-                iconName = "star";
-                break;
-              case "Watchlist":
-                iconName = "heart";
-                break;
-              case "Profile":
-                iconName = "person";
-                break;
-            }
-
-            return <Ionicons name={iconName} size={size} color={color} />;
+          tabBarIcon: ({ color, focused, size }) => {
+            const iconSet = icons[route.name] ?? icons.Home;
+            return <Ionicons name={focused ? iconSet.active : iconSet.inactive} size={size} color={color} />;
           },
         })}
       >
@@ -71,5 +60,5 @@ export default function BottomTabs() {
 }
 
 const styles = StyleSheet.create({
-  tabBarBackground: { backgroundColor: Colors.overlay, borderColor: Colors.border, borderRadius: Radius.pill, borderWidth: 1, overflow: "hidden", ...Shadows.card },
+  tabBarBackground: { bottom: 0, left: 0, position: "absolute", right: 0, top: 0, backgroundColor: Colors.overlay, borderColor: Colors.hairlineStrong, borderRadius: Radius.pill, borderWidth: 1, overflow: "hidden", ...Shadows.card },
 });

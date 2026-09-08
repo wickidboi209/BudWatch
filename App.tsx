@@ -1,6 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { useEffect } from "react";
+import { ActivityIndicator, Platform, StyleSheet, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import BottomTabs from "./src/navigation/BottomTabs";
@@ -16,7 +17,18 @@ const DEV_BYPASS_AUTH = false;
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+function useWebViewportFix() {
+  useEffect(() => {
+    if (Platform.OS !== "web" || typeof document === "undefined") return;
+    const style = document.createElement("style");
+    style.textContent = "html,body,#root{height:100%;overflow:hidden;}";
+    document.head.appendChild(style);
+    return () => { document.head.removeChild(style); };
+  }, []);
+}
+
 export default function App() {
+  useWebViewportFix();
   return (
     <SafeAreaProvider>
       <AuthProvider>

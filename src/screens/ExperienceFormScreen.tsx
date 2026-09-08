@@ -9,6 +9,7 @@ import { RootStackParamList } from "../navigation/types";
 import { saveExperience } from "../services/experiences";
 import { Colors } from "../theme/colors";
 import { Radius } from "../theme/radius";
+import { Shadows } from "../theme/shadows";
 import { Spacing } from "../theme/spacing";
 import { Typography } from "../theme/typography";
 
@@ -29,6 +30,7 @@ export default function ExperienceFormScreen({ navigation, route }: ExperienceFo
   const [containsSpoilers, setContainsSpoilers] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isNotesFocused, setIsNotesFocused] = useState(false);
 
   const submit = async () => {
     setError(null);
@@ -67,7 +69,7 @@ export default function ExperienceFormScreen({ navigation, route }: ExperienceFo
           <MoodSelector moods={moods} onMoodChange={setMood} selectedMood={mood} />
 
           <Text style={styles.sectionTitle}>Notes</Text>
-          <TextInput accessibilityLabel="Experience notes" multiline onChangeText={setNotes} placeholder="Capture the feeling, the scene, or the moment..." placeholderTextColor={Colors.textSecondary} style={styles.input} textAlignVertical="top" value={notes} />
+          <TextInput accessibilityLabel="Experience notes" multiline onBlur={() => setIsNotesFocused(false)} onChangeText={setNotes} onFocus={() => setIsNotesFocused(true)} placeholder="Capture the feeling, the scene, or the moment..." placeholderTextColor={Colors.textSecondary} style={[styles.input, isNotesFocused && styles.inputFocused]} textAlignVertical="top" value={notes} />
 
           <View style={styles.spoilerRow}>
             <View style={styles.spoilerCopy}>
@@ -92,19 +94,20 @@ const styles = StyleSheet.create({
   container: { backgroundColor: Colors.background, flex: 1 },
   content: { paddingBottom: Spacing.xxxl, paddingHorizontal: Spacing.xl, paddingTop: Spacing.lg },
   header: { alignItems: "flex-start", flexDirection: "row", gap: Spacing.md },
-  backButton: { alignItems: "center", backgroundColor: Colors.surface, borderRadius: Radius.pill, height: 44, justifyContent: "center", width: 44 },
+  backButton: { alignItems: "center", backgroundColor: Colors.surface, borderColor: Colors.hairline, borderRadius: Radius.pill, borderWidth: 1, height: 44, justifyContent: "center", width: 44 },
   headerCopy: { flex: 1 },
-  eyebrow: { color: Colors.primary, ...Typography.label, letterSpacing: 1 },
-  title: { color: Colors.text, ...Typography.title, marginTop: Spacing.xs },
-  sectionTitle: { color: Colors.text, ...Typography.heading, marginBottom: Spacing.md, marginTop: Spacing.xxl },
+  eyebrow: { color: Colors.primary, ...Typography.label, letterSpacing: 1.2 },
+  title: { color: Colors.text, letterSpacing: -0.3, ...Typography.title, marginTop: Spacing.xs },
+  sectionTitle: { color: Colors.text, letterSpacing: -0.2, ...Typography.heading, fontWeight: "700", marginBottom: Spacing.md, marginTop: Spacing.xxl },
   scoreHint: { color: Colors.textSecondary, ...Typography.body, marginTop: Spacing.sm },
-  input: { backgroundColor: Colors.surface, borderColor: Colors.border, borderRadius: Radius.md, borderWidth: 1, color: Colors.text, ...Typography.body, height: 140, padding: Spacing.lg },
-  spoilerRow: { alignItems: "center", borderBottomColor: Colors.border, borderBottomWidth: 1, flexDirection: "row", justifyContent: "space-between", paddingBottom: Spacing.lg, paddingTop: Spacing.xl },
+  input: { backgroundColor: Colors.surfaceElevated, borderColor: Colors.hairlineStrong, borderRadius: Radius.md, borderWidth: 1, color: Colors.text, ...Typography.body, height: 140, padding: Spacing.lg },
+  inputFocused: { borderColor: Colors.primary },
+  spoilerRow: { alignItems: "center", backgroundColor: Colors.surface, borderColor: Colors.hairline, borderRadius: Radius.lg, borderWidth: 1, flexDirection: "row", justifyContent: "space-between", padding: Spacing.lg, marginTop: Spacing.xl },
   spoilerCopy: { flex: 1, paddingRight: Spacing.lg },
   spoilerTitle: { color: Colors.text, ...Typography.body, fontWeight: "700" },
   spoilerDescription: { color: Colors.textSecondary, ...Typography.label, fontWeight: "400", marginTop: Spacing.xs },
   error: { color: Colors.danger, ...Typography.body, marginTop: Spacing.xl },
-  saveButton: { alignItems: "center", backgroundColor: Colors.primary, borderRadius: Radius.pill, justifyContent: "center", marginTop: Spacing.xxl, minHeight: 54 },
+  saveButton: { alignItems: "center", backgroundColor: Colors.primary, borderRadius: Radius.pill, justifyContent: "center", marginTop: Spacing.xxl, minHeight: 54, ...Shadows.hero },
   saveText: { color: Colors.background, ...Typography.heading },
   pressed: { opacity: 0.8 },
 });

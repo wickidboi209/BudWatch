@@ -1,3 +1,4 @@
+import { LinearGradient } from "expo-linear-gradient";
 import { useRef } from "react";
 import { Animated, ImageStyle, StyleSheet, View } from "react-native";
 import { Colors } from "../../theme/colors";
@@ -18,7 +19,7 @@ export function HeroBackdrop({ image, title }: HeroBackdropProps) {
           style={[styles.image, { opacity }] as ImageStyle[]}
         />
       ) : null}
-      <View style={styles.scrim} />
+      <LinearGradient colors={[Colors.overlayTransparent, `${Colors.background}B3`, Colors.background]} locations={[0.1, 0.65, 1]} style={styles.scrim} />
     </View>
   );
 }
@@ -26,5 +27,5 @@ export function HeroBackdrop({ image, title }: HeroBackdropProps) {
 const styles = StyleSheet.create({
   container: { backgroundColor: Colors.surfaceElevated, height: 300, overflow: "hidden" },
   image: { height: "100%", position: "absolute", width: "100%" },
-  scrim: { backgroundColor: Colors.overlay, height: "100%", width: "100%" },
+  scrim: { height: "100%", width: "100%" },
 });

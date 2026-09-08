@@ -40,11 +40,11 @@ export function HeroMovieBanner({ movie, onDetailsPress, onPress }: HeroMovieBan
   return (
     <Pressable accessibilityLabel={`Watch ${movie.title} tonight`} accessibilityRole="button" onPress={() => onPress?.(movie)} style={styles.container}>
       {!imageFailed ? <Animated.Image onError={() => { setImageFailed(true); reveal(); if (__DEV__) console.warn(`[HeroMovieBanner] Unable to load artwork for ${movie.title}.`); }} onLoad={reveal} resizeMode="cover" source={{ uri: movie.backdropImage ?? movie.image }} style={[styles.image, { opacity }]} /> : <View style={styles.fallbackArtwork}><Text style={styles.fallbackTitle}>{movie.title}</Text></View>}
-      <LinearGradient colors={[Colors.overlayTransparent, Colors.overlay]} locations={[0.15, 1]} style={styles.gradient} />
+      <LinearGradient colors={[Colors.overlayTransparent, `${Colors.background}B3`, Colors.background]} locations={[0.1, 0.62, 1]} style={styles.gradient} />
       <Animated.View style={[styles.content, { opacity, transform: [{ translateY: offset }] }]}>
+        <View style={styles.scorePill}><Text style={styles.leaf}>🍃</Text><Text style={styles.score}>{movie.budScore ?? movie.rating}</Text></View>
         <Text numberOfLines={1} style={styles.title}>{movie.title}</Text>
-        <Text numberOfLines={1} style={styles.tagline}>{movie.overview || "Fear is the mind killer."}</Text>
-        <View style={styles.scorePill}><Text style={styles.score}><Text style={styles.leaf}>🍃</Text> {movie.budScore ?? movie.rating}</Text></View>
+        <Text numberOfLines={2} style={styles.tagline}>{movie.overview || "Fear is the mind killer."}</Text>
         <View style={styles.buttonRow}>
           <Pressable accessibilityRole="button" onPress={() => onPress?.(movie)} style={({ pressed }) => [styles.watchButton, pressed && styles.pressed]}><Ionicons color={Colors.background} name="play" size={14} /><Text style={styles.watchText}>Watch Tonight</Text></Pressable>
           <Pressable accessibilityRole="button" onPress={() => onDetailsPress?.(movie)} style={({ pressed }) => [styles.detailsButton, pressed && styles.pressed]}><Text style={styles.detailsText}>Details</Text></Pressable>
@@ -71,15 +71,15 @@ const styles = StyleSheet.create({
   fallbackTitle: { color: Colors.textSecondary, ...Typography.title },
   gradient: { ...StyleSheet.absoluteFill },
   content: { bottom: 0, left: 0, padding: Spacing.xl, position: "absolute", right: 0 },
-  title: { color: Colors.text, ...Typography.display },
-  tagline: { color: Colors.textSecondary, ...Typography.body, marginTop: Spacing.sm },
-  scorePill: { alignSelf: "flex-start", backgroundColor: Colors.overlay, borderRadius: Radius.pill, marginTop: Spacing.md, paddingHorizontal: Spacing.md, paddingVertical: Spacing.xs },
-  score: { color: Colors.text, ...Typography.label },
-  leaf: { fontSize: 16 },
-  buttonRow: { alignItems: "center", flexDirection: "row", gap: Spacing.xs, marginTop: Spacing.lg },
-  watchButton: { alignItems: "center", backgroundColor: Colors.text, borderRadius: Radius.pill, flexDirection: "row", gap: Spacing.xs, minHeight: 44, paddingHorizontal: Spacing.md },
+  title: { color: Colors.text, letterSpacing: -0.4, marginTop: Spacing.sm, ...Typography.display },
+  tagline: { color: Colors.textSecondary, ...Typography.body, marginTop: Spacing.xs, maxWidth: "92%" },
+  scorePill: { alignItems: "center", alignSelf: "flex-start", backgroundColor: Colors.overlay, borderColor: Colors.hairline, borderRadius: Radius.pill, borderWidth: 1, flexDirection: "row", gap: 4, paddingHorizontal: Spacing.md, paddingVertical: 6 },
+  score: { color: Colors.gold, ...Typography.label },
+  leaf: { fontSize: 14 },
+  buttonRow: { alignItems: "center", flexDirection: "row", gap: Spacing.sm, marginTop: Spacing.lg },
+  watchButton: { alignItems: "center", backgroundColor: Colors.text, borderRadius: Radius.pill, flexDirection: "row", gap: Spacing.xs, minHeight: 46, paddingHorizontal: Spacing.lg, ...Shadows.card },
   watchText: { color: Colors.background, ...Typography.label },
-  detailsButton: { borderColor: Colors.textSecondary, borderRadius: Radius.pill, borderWidth: 1, justifyContent: "center", minHeight: 44, paddingHorizontal: Spacing.md },
+  detailsButton: { backgroundColor: Colors.overlay, borderColor: Colors.hairlineStrong, borderRadius: Radius.pill, borderWidth: 1, justifyContent: "center", minHeight: 46, paddingHorizontal: Spacing.lg },
   detailsText: { color: Colors.text, ...Typography.label },
   pressed: { opacity: 0.7 },
   fallback: { backgroundColor: Colors.surface, justifyContent: "center", minHeight: 300, padding: Spacing.xl },

@@ -7,6 +7,7 @@ import { CrewList } from "../components/social/CrewList";
 import { useAuth } from "../hooks/useAuth";
 import { ExperienceStats, getUserExperienceStats } from "../services/experiences";
 import { crewMembers } from "../services/social";
+import { TAB_BAR_CLEARANCE } from "../navigation/tabBarMetrics";
 import { Colors } from "../theme/colors";
 import { Radius } from "../theme/radius";
 import { Spacing } from "../theme/spacing";
@@ -91,20 +92,20 @@ function Stat({ label, value }: { label: string; value: string }) {
 
 const styles = StyleSheet.create({
   container: { backgroundColor: Colors.background, flex: 1 },
-  content: { padding: Spacing.xl, paddingBottom: Spacing.xxxl, paddingTop: Spacing.xxxl },
+  content: { padding: Spacing.xl, paddingBottom: Spacing.xxxl + TAB_BAR_CLEARANCE, paddingTop: Spacing.xxxl },
   profileHeader: { alignItems: "center", flexDirection: "row", gap: Spacing.lg, marginBottom: Spacing.xxxl },
-  avatar: { alignItems: "center", backgroundColor: Colors.surface, borderColor: Colors.border, borderRadius: Radius.pill, borderWidth: 1, height: 88, justifyContent: "center", width: 88 },
+  avatar: { alignItems: "center", backgroundColor: Colors.surface, borderColor: Colors.primary, borderRadius: Radius.pill, borderWidth: 1.5, height: 88, justifyContent: "center", width: 88 },
   identity: { flex: 1 },
-  eyebrow: { color: Colors.textSecondary, ...Typography.label, letterSpacing: 1 },
-  title: { color: Colors.text, ...Typography.display, marginTop: Spacing.xs },
-  sectionTitle: { color: Colors.text, ...Typography.heading, marginBottom: Spacing.lg, marginTop: Spacing.xxxl },
+  eyebrow: { color: Colors.textSecondary, ...Typography.label, letterSpacing: 1.2 },
+  title: { color: Colors.text, letterSpacing: -0.4, ...Typography.display, marginTop: Spacing.xs },
+  sectionTitle: { color: Colors.text, letterSpacing: -0.2, ...Typography.heading, fontWeight: "700", marginBottom: Spacing.lg, marginTop: Spacing.xxxl },
   loading: { marginTop: Spacing.xl },
   error: { color: Colors.danger, ...Typography.body },
   statsGrid: { flexDirection: "row", flexWrap: "wrap", gap: Spacing.md },
   stat: { minHeight: 88, paddingVertical: Spacing.md, width: "47%" },
   statValue: { color: Colors.text, ...Typography.heading },
   statLabel: { color: Colors.textSecondary, ...Typography.label, fontWeight: "400", marginTop: Spacing.sm },
-  signOutButton: { alignItems: "center", backgroundColor: Colors.surface, borderColor: Colors.border, borderRadius: Radius.pill, borderWidth: 1, justifyContent: "center", marginTop: Spacing.xxxl, minHeight: 54 },
+  signOutButton: { alignItems: "center", backgroundColor: Colors.surface, borderColor: Colors.hairlineStrong, borderRadius: Radius.pill, borderWidth: 1, justifyContent: "center", marginTop: Spacing.xxxl, minHeight: 54 },
   signOutText: { color: Colors.text, ...Typography.heading },
   pressed: { opacity: 0.7 },
 });

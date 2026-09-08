@@ -35,7 +35,7 @@ export default function VibeScreen() {
     <SafeAreaView edges={["bottom"]} style={styles.container}>
       <AmbientBackground />
       <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + Spacing.xxl }]} showsVerticalScrollIndicator={false}>
-        <Text style={styles.eyebrow}>Tonight's Vibe</Text>
+        <Text style={styles.eyebrow}>What's the Vibe?</Text>
 
         <View style={styles.grid}>
           {rows.map((row, rowIndex) => (

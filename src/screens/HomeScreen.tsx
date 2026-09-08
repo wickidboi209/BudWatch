@@ -6,40 +6,38 @@ import { Animated, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View
 import { SafeAreaView } from "react-native-safe-area-context";
 import { HeroMovieBanner, HeroMovieFallback } from "../components/HeroMovieBanner";
 import { Logo } from "../components/Logo";
-import { Mood, MoodSelector } from "../components/MoodSelector";
+import { MoodSelector } from "../components/MoodSelector";
 import { MovieFeedSkeleton } from "../components/MovieFeedSkeleton";
+import { Movie } from "../components/MoviePosterCard";
 import { MovieRow } from "../components/MovieRow";
 import { SectionHeader } from "../components/SectionHeader";
+import { getVibe, VIBES } from "../config/vibes";
 import { useReducedMotion } from "../hooks/useReducedMotion";
+import { useVibe } from "../hooks/useVibe";
 import { TAB_BAR_CLEARANCE } from "../navigation/tabBarMetrics";
 import { RootStackParamList } from "../navigation/types";
-import { fetchHomeMovies, TmdbHomeMovies } from "../services/tmdb";
+import { fetchHomeMovies, fetchMoviesForVibe, TmdbHomeMovies } from "../services/tmdb";
 import { Colors } from "../theme/colors";
 import { Radius } from "../theme/radius";
 import { Spacing } from "../theme/spacing";
 import { Typography } from "../theme/typography";
 
-const moods: Mood[] = [
-  { id: "laugh", label: "Laugh", icon: "😂" },
-  { id: "mind-bending", label: "Mind Bending", icon: "🤯" },
-  { id: "sci-fi", label: "Escape", icon: "🌌" },
-  { id: "horror", label: "Horror", icon: "👻" },
-  { id: "animation", label: "Animation", icon: "🎨" },
-];
-
-const moodRecommendations: Record<string, number> = { laugh: 1, "mind-bending": 2, "sci-fi": 0, horror: 3, animation: 1 };
 type MovieId = { id: string };
 type HomeRowProps = { title: string; movies: TmdbHomeMovies["trending"]; onMoviePress: (movie: MovieId) => void };
 
 export default function HomeScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const [selectedMood, setSelectedMood] = useState("sci-fi");
+  const { selectedVibeId, setSelectedVibeId } = useVibe();
+  const selectedMood = selectedVibeId ?? VIBES[0].id;
   const [movies, setMovies] = useState<TmdbHomeMovies | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
+  const [vibeMovies, setVibeMovies] = useState<Movie[] | null>(null);
+  const [isVibeLoading, setIsVibeLoading] = useState(true);
   const requestId = useRef(0);
+  const vibeRequestId = useRef(0);
   const contentOpacity = useRef(new Animated.Value(0)).current;
   const reducedMotion = useReducedMotion();
   const openMovie = useCallback((movie: MovieId) => navigation.navigate("MovieDetail", { movieId: movie.id }), [navigation]);
@@ -60,13 +58,31 @@ export default function HomeScreen() {
     }
   }, []);
 
+  const loadVibeMovies = useCallback(async (vibeId: string) => {
+    const currentRequestId = ++vibeRequestId.current;
+    setIsVibeLoading(true);
+    try {
+      const genreIds = getVibe(vibeId)?.genreIds ?? [];
+      const result = await fetchMoviesForVibe(genreIds);
+      if (currentRequestId === vibeRequestId.current) setVibeMovies(result);
+    } catch (requestError: unknown) {
+      if (__DEV__) console.warn(`[HomeScreen] Vibe movie request failed: ${requestError instanceof Error ? requestError.message : "unknown error"}`);
+    } finally {
+      if (currentRequestId === vibeRequestId.current) setIsVibeLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     void loadMovies();
     return () => { requestId.current += 1; };
   }, [loadMovies, retryCount]);
 
   useEffect(() => {
-    if (movies && !isLoading) {
+    void loadVibeMovies(selectedMood);
+  }, [loadVibeMovies, selectedMood]);
+
+  useEffect(() => {
+    if (movies && !isLoading && vibeMovies && !isVibeLoading) {
       if (reducedMotion) {
         contentOpacity.setValue(1);
         return;
@@ -74,9 +90,10 @@ export default function HomeScreen() {
       contentOpacity.setValue(0);
       Animated.timing(contentOpacity, { duration: 450, toValue: 1, useNativeDriver: true }).start();
     }
-  }, [contentOpacity, isLoading, movies, reducedMotion]);
+  }, [contentOpacity, isLoading, isVibeLoading, movies, reducedMotion, vibeMovies]);
 
-  const heroMovie = movies?.trending.length ? movies.trending[moodRecommendations[selectedMood] % movies.trending.length] ?? movies.trending[0] : null;
+  const isInitialLoading = isLoading || (isVibeLoading && !vibeMovies);
+  const heroMovie = vibeMovies?.[0] ?? null;
 
   return <SafeAreaView edges={["top"]} style={styles.container}>
     <ScrollView contentContainerStyle={styles.content} refreshControl={<RefreshControl colors={[Colors.primary]} onRefresh={() => void loadMovies(true)} refreshing={isRefreshing} tintColor={Colors.primary} />} showsVerticalScrollIndicator={false}>
@@ -87,12 +104,12 @@ export default function HomeScreen() {
         </Pressable>
       </View>
 
-      {isLoading ? <MovieFeedSkeleton /> : error && !movies ? <View style={styles.errorState}><Text style={styles.errorTitle}>Your next movie night is waiting.</Text><Text style={styles.errorText}>We could not find the feed right now.</Text><Pressable accessibilityRole="button" onPress={() => setRetryCount((count) => count + 1)} style={styles.retryButton}><Text style={styles.retryText}>Try again</Text></Pressable></View> : <Animated.View style={{ opacity: contentOpacity }}><View style={styles.hero}>{heroMovie ? <HeroMovieBanner movie={heroMovie} onDetailsPress={openMovie} onPress={openMovie} /> : <HeroMovieFallback onRetry={() => setRetryCount((count) => count + 1)} />}</View></Animated.View>}
+      {isInitialLoading ? <MovieFeedSkeleton /> : error && !movies ? <View style={styles.errorState}><Text style={styles.errorTitle}>Your next movie night is waiting.</Text><Text style={styles.errorText}>We could not find the feed right now.</Text><Pressable accessibilityRole="button" onPress={() => setRetryCount((count) => count + 1)} style={styles.retryButton}><Text style={styles.retryText}>Try again</Text></Pressable></View> : <Animated.View style={{ opacity: contentOpacity }}><View style={styles.hero}>{heroMovie ? <HeroMovieBanner movie={heroMovie} onDetailsPress={openMovie} onPress={openMovie} /> : <HeroMovieFallback onRetry={() => setRetryCount((count) => count + 1)} />}</View></Animated.View>}
 
-      <View style={styles.question}><Text style={styles.questionText}>What kind of night are you having?</Text><MoodSelector compact moods={moods} onMoodChange={setSelectedMood} selectedMood={selectedMood} /></View>
+      <View style={styles.question}><Text style={styles.questionText}>What kind of night are you having?</Text><MoodSelector compact moods={VIBES} onMoodChange={setSelectedVibeId} selectedMood={selectedMood} /></View>
 
-      {!isLoading && movies ? <Animated.View style={[styles.rows, { opacity: contentOpacity }]}>
-        <HomeRow title="For You" movies={movies.trending.slice(1, 6)} onMoviePress={openMovie} />
+      {!isInitialLoading && movies ? <Animated.View style={[styles.rows, { opacity: contentOpacity }]}>
+        <HomeRow title="For You" movies={vibeMovies?.slice(1, 6) ?? []} onMoviePress={openMovie} />
         <HomeRow title="Community Picks" movies={movies.popular.slice(0, 6)} onMoviePress={openMovie} />
         <HomeRow title="Continue Watching" movies={movies.trending.slice(0, 4)} onMoviePress={openMovie} />
       </Animated.View> : null}

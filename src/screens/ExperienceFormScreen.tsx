@@ -3,8 +3,9 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useState } from "react";
 import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Mood, MoodSelector } from "../components/MoodSelector";
+import { MoodSelector } from "../components/MoodSelector";
 import { ScoreSelector } from "../components/ScoreSelector";
+import { VIBES } from "../config/vibes";
 import { RootStackParamList } from "../navigation/types";
 import { saveExperience } from "../services/experiences";
 import { Colors } from "../theme/colors";
@@ -13,19 +14,11 @@ import { Shadows } from "../theme/shadows";
 import { Spacing } from "../theme/spacing";
 import { Typography } from "../theme/typography";
 
-const moods: Mood[] = [
-  { id: "laugh", label: "Laugh", icon: "😂" },
-  { id: "mind-bending", label: "Mind bending", icon: "🤯" },
-  { id: "sci-fi", label: "Sci-Fi", icon: "🌌" },
-  { id: "relax", label: "Relax", icon: "😌" },
-  { id: "horror", label: "Horror", icon: "👻" },
-];
-
 type ExperienceFormScreenProps = NativeStackScreenProps<RootStackParamList, "ExperienceForm">;
 
 export default function ExperienceFormScreen({ navigation, route }: ExperienceFormScreenProps) {
   const [score, setScore] = useState(7);
-  const [mood, setMood] = useState("relax");
+  const [mood, setMood] = useState(VIBES[0].id);
   const [notes, setNotes] = useState("");
   const [containsSpoilers, setContainsSpoilers] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -66,7 +59,7 @@ export default function ExperienceFormScreen({ navigation, route }: ExperienceFo
           <Text style={styles.scoreHint}>{score}/10 Bud Score</Text>
 
           <Text style={styles.sectionTitle}>What was the mood?</Text>
-          <MoodSelector moods={moods} onMoodChange={setMood} selectedMood={mood} />
+          <MoodSelector moods={VIBES} onMoodChange={setMood} selectedMood={mood} />
 
           <Text style={styles.sectionTitle}>Notes</Text>
           <TextInput accessibilityLabel="Experience notes" multiline onBlur={() => setIsNotesFocused(false)} onChangeText={setNotes} onFocus={() => setIsNotesFocused(true)} placeholder="Capture the feeling, the scene, or the moment..." placeholderTextColor={Colors.textSecondary} style={[styles.input, isNotesFocused && styles.inputFocused]} textAlignVertical="top" value={notes} />

@@ -7,10 +7,13 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import BottomTabs from "./src/navigation/BottomTabs";
 import AuthFlow from "./src/navigation/AuthFlow";
 import { useAuth } from "./src/hooks/useAuth";
+import { useVibe } from "./src/hooks/useVibe";
 import { RootStackParamList } from "./src/navigation/types";
 import MovieDetailScreen from "./src/screens/MovieDetailScreen";
 import ExperienceFormScreen from "./src/screens/ExperienceFormScreen";
+import VibeScreen from "./src/screens/VibeScreen";
 import { AuthProvider } from "./src/providers/AuthProvider";
+import { VibeProvider } from "./src/providers/VibeProvider";
 import { Colors } from "./src/theme/colors";
 
 const DEV_BYPASS_AUTH = false;
@@ -32,7 +35,9 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <AuthProvider>
-        <AppContent />
+        <VibeProvider>
+          <AppContent />
+        </VibeProvider>
       </AuthProvider>
     </SafeAreaProvider>
   );
@@ -40,12 +45,15 @@ export default function App() {
 
 function AppContent() {
   const { isLoading, user } = useAuth();
+  const { selectedVibeId } = useVibe();
 
   if (isLoading) {
     return <View style={styles.loading}><ActivityIndicator color={Colors.primary} size="large" /></View>;
   }
 
   if (!user && !DEV_BYPASS_AUTH) return <AuthFlow />;
+
+  if (!selectedVibeId) return <VibeScreen />;
 
   return (
     <NavigationContainer>

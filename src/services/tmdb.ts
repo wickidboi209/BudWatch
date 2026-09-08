@@ -157,6 +157,13 @@ export async function fetchMovieDetailsById(movieId: string): Promise<MovieDetai
   return mapTmdbMovieDetails(details);
 }
 
+export async function fetchMoviesForVibe(genreIds: number[]): Promise<Movie[]> {
+  const apiKey = getApiKey();
+  const q = `?api_key=${encodeURIComponent(apiKey)}&language=en-US&page=1&sort_by=popularity.desc&vote_count.gte=100&with_genres=${genreIds.join("|")}`;
+  const response = await fetchMovies(`/discover/movie${q}`);
+  return mapMovies(response);
+}
+
 export async function fetchSearchMovies(query: string): Promise<Movie[]> {
   const apiKey = getApiKey();
   const q = `?api_key=${encodeURIComponent(apiKey)}&language=en-US&page=1&include_adult=false&query=${encodeURIComponent(query)}`;

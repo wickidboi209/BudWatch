@@ -4,6 +4,7 @@ import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BudScoreCard } from "../components/BudScoreCard";
 import { CrewList } from "../components/social/CrewList";
+import { getVibe } from "../config/vibes";
 import { useAuth } from "../hooks/useAuth";
 import { ExperienceStats, getUserExperienceStats } from "../services/experiences";
 import { crewMembers } from "../services/social";
@@ -12,15 +13,6 @@ import { Colors } from "../theme/colors";
 import { Radius } from "../theme/radius";
 import { Spacing } from "../theme/spacing";
 import { Typography } from "../theme/typography";
-
-const moodLabels: Record<string, string> = {
-  laugh: "Laugh",
-  "mind-bending": "Mind Bending",
-  "sci-fi": "Escape",
-  relax: "Relax",
-  horror: "Horror",
-  animation: "Animation",
-};
 
 export default function ProfileScreen() {
   const { signOut, user } = useAuth();
@@ -45,7 +37,7 @@ export default function ProfileScreen() {
     try { await signOut(); } finally { setIsSigningOut(false); }
   }, [signOut]);
 
-  const favoriteMood = stats?.favoriteMood ? moodLabels[stats.favoriteMood] ?? stats.favoriteMood : "Not enough data";
+  const favoriteMood = stats?.favoriteMood ? getVibe(stats.favoriteMood)?.label ?? stats.favoriteMood : "Not enough data";
 
   return (
     <SafeAreaView style={styles.container}>
